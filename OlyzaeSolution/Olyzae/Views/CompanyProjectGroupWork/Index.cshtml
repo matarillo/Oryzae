@@ -1,0 +1,67 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.GroupWork>
+
+@{
+    ViewBag.Title = "Index";
+    var theme = ViewBag.Theme as NihonUnisys.Olyzae.Models.Theme;
+    var projectGroupNames = ViewBag.ProjectGroupNames as System.Collections.Generic.Dictionary<int, string>;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>課題テーマに対する評価</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <div>
+        <p>
+            @Html.DropDownList("SelectedThemeId", (System.Collections.Generic.List<SelectListItem>)ViewBag.ThemeList, "課題テーマを選択")
+        <input type="submit" value="選択" class="btn btn-default" />
+    </p>
+</div>
+}
+
+@if (theme != null)
+{
+    <div>
+        <p>@Html.ActionLink("評価を新規作成", "Create", new { themeId = theme.ID }, new { @class = "glyphicon glyphicon-plus btn btn-default" })</p>
+        <br />
+    </div>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            @foreach (var key in theme.EvaluationKeys)
+            {
+                <th>@key</th>
+            }
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @(projectGroupNames[item.ProjectGroup.ID])
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                @foreach (var key in theme.EvaluationKeys)
+                {
+                    <td>@(item.EvaluationValue(key))</td>
+                }
+                <td>
+                    @Html.ActionLink("編集", "Edit", new { themeId = item.ThemeID, projectGroupId = item.ProjectGroupID }) |
+                    @Html.ActionLink("詳細", "Details", new { themeId = item.ThemeID, projectGroupId = item.ProjectGroupID }) |
+                    @Html.ActionLink("削除", "Delete", new { themeId = item.ThemeID, projectGroupId = item.ProjectGroupID })
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+

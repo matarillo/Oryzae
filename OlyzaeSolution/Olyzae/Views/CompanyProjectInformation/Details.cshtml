@@ -1,0 +1,179 @@
+﻿@model NihonUnisys.Olyzae.Models.ProjectThread
+
+@{
+    ViewBag.Title = "Details";
+    List<NihonUnisys.Olyzae.Models.Message> messages = ViewBag.ResponseMessages as List<NihonUnisys.Olyzae.Models.Message>;
+    NihonUnisys.Olyzae.Models.Message information = ViewBag.Information as NihonUnisys.Olyzae.Models.Message;
+    Dictionary<int, string> sentUserNames = ViewBag.SentUserNames as Dictionary<int, string>;
+    Dictionary<int, string> receivedUserNames = ViewBag.ReceivedUserNames as Dictionary<int, string>;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>お知らせ</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>タイトル</dt>
+        <dd>
+            <p>
+                @Html.DisplayFor(model => model.ThreadName)
+            </p>
+        </dd>
+        <dt>概要</dt>
+        <dd>
+            <div>
+                @Html.Raw(Html.Encode(information.Body).Replace("\n", "<br/>"))
+            </div>
+        </dd>
+        @if (information.AttachedDocumentID.HasValue)
+        {
+            <dt>添付ファイル</dt>
+            <dd>
+                <p>
+                    <a href="@Url.Action("Download", new { threadId = Model.ID, messageId = information.ID })" class="btn btn-default">
+                        <span class="glyphicon glyphicon-paperclip"></span> @information.AttachedFileName
+                    </a>
+                </p>
+            </dd>
+        }
+        <dt>
+            配信先
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var item in receivedUserNames)
+                {
+                    <li>@item.Value</li>
+                }
+            </ul>
+        </dd>
+        <dt>期間</dt>
+        <dd>
+            <p>
+                @Html.Encode(Model.Duration.From.Value.ToString("yyyy/M/dd") + "～" + Model.Duration.To.Value.ToString("yyyy/M/dd"))
+            </p>
+        </dd>
+        <dt>作成者</dt>
+        <dd>
+            @information.SentUser.DisplayName
+        </dd>
+    </dl>
+    <hr />
+    <h3>このお知らせに対するメッセージ</h3>
+    @if (messages != null && messages.Count() > 0)
+    {
+        <dl class="dl-horizontal">
+            @foreach (var message in messages)
+            {
+                <dt>
+                    <a href="@Url.Action("Index", "User", new { id = message.SentUser.ID })">
+                        <img src="@Url.Action("ProfileImage", "User", new { id = message.SentUser.ID, thumbnail = true })" alt="" title="@message.SentUser.DisplayName" style="width:80px;" />
+                    </a>
+                </dt>
+                <dd>
+                    <div>
+                        @Html.Raw(Html.Encode(message.Body).Replace("\n", "<br/>"))
+                    </div>
+                    @if (information.AttachedDocumentID.HasValue)
+                    {
+                        <div>
+                            <a href="@Url.Action("Download", new { threadId = Model.ID, messageId = information.ID })" class="btn btn-default">
+                                <span class="glyphicon glyphicon-paperclip"></span> @information.AttachedFileName
+                            </a>
+                        </div>
+                    }
+                    <div>
+                        Posted by @message.SentUser.DisplayName
+                        @if (message.Sent.HasValue)
+                        {
+                            @Html.Encode(" at " + message.Sent.Value.ToString("yyyy/M/dd HH:mm"))
+                        }
+                    </div>
+                    <br />
+                </dd>
+            }
+        </dl>
+    }
+    else
+    {
+        <p>メッセージはありません。</p>
+    }
+    <hr />
+    @using (Html.BeginForm("PostMessage", "CompanyProjectInformation", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+    {
+        <div class="form-horizontal" id="message-post-area">
+            <div class="form-group">
+                @Html.Label("メッセージ  ", new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextArea("Body", (string)ViewBag.Body, new { @class = "text-box multi-line form-control", @rows = "5" })
+                    @Html.ValidationMessage("Body")
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 olyzae-filegroup">
+                    <div class="olyzae-file" style="display: none; border-radius: 4px; padding: 6px 12px; border: 1px solid #dddddd;">
+                        <span class="glyphicon glyphicon-paperclip"></span>
+                        <span class="olyzae-filename" style="padding: 0em 0.5em;"></span>
+                        <button type="button" class="close olyzae-removefile" style="float: none;">&times;</button>
+                    </div>
+                    <div class="olyzae-nofile">
+                        <div class="btn btn-default olyzae-addfile" style="position: relative; overflow: hidden;">
+                            <input type="file" name="uploadedFile" style="position: absolute; bottom: 0; right: 0; font-size: 100px; opacity: 0;" />
+                            <span class="glyphicon glyphicon-paperclip"></span>ファイルを添付する
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="メッセージを投稿" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+        @Html.Hidden("ProjectThreadId", Model.ID)
+    }
+</div>
+<p>
+    @Html.ActionLink("一覧へ戻る", "Index")
+</p>
+
+@section scripts {
+    @if (false)
+    {
+        <script type="text/javascript" src="~/Scripts/jquery-1.10.2.js"></script>
+    }
+    <script type="text/javascript">
+        function addFile($container, fileName) {
+            $container.find('.olyzae-nofile').css({ display: 'none' });
+            $container.find('.olyzae-filename').text(fileName);
+            $container.find('.olyzae-file').css({ display: 'inline-block' });
+        }
+        function removeFile($container) {
+            $container.find('.olyzae-file').css({ display: 'none' });
+            $container.find('.olyzae-filename').text('');
+            $container.find('.olyzae-nofile').css({ display: 'inherit' });
+        }
+        $(function () {
+            $('.olyzae-filegroup input[type=file]').change(function () {
+                var $container = $(this).closest('.olyzae-filegroup');
+                var fileName = $(this).val().replace(/.*[/\\]/, '');
+                if (fileName) {
+                    addFile($container, fileName);
+                } else {
+                    removeFile($container);
+                }
+            });
+            $('.olyzae-filegroup .olyzae-removefile').click(function () {
+                var $container = $(this).closest('.olyzae-filegroup');
+                $container.wrap("<form />");
+                $container.parent().trigger('reset');
+                $container.unwrap();
+                removeFile($container);
+            });
+        });
+    </script>
+}

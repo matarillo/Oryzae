@@ -1,0 +1,418 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@if (false)
+{
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
+}
+<script type="text/javascript">
+    function showText(data) {
+        return data || '(説明文)';
+    }
+    function showTitle(data) {
+        return data || '(質問)';
+    }
+    function showQuestion(data, index) {
+        return data || '(質問' + (1 + index) + ')';
+    }
+    function showChoice(data, index) {
+        return data || '(選択肢' + (1 + index) + ')';
+    }
+
+    function addItem(vm, parent) {
+        // 選択した項目種別に応じたダイアログを表示し、
+        // 項目のダイアログに入力された内容をViewModelに追加する
+        vm.selectItemDialog.show(function (d) {
+            var dialog;
+            var selected = d.selectedValue();
+            if (selected == null) {
+                return;
+            }
+            switch (selected.value) {
+                case 0:
+                    dialog = vm.textBoxDialog;
+                    break;
+                case 1:
+                    dialog = vm.textAreaDialog;
+                    break;
+                case 2:
+                    dialog = vm.radioButtonsDialog;
+                    break;
+                case 3:
+                    dialog = vm.radioButtonsGroupDialog;
+                    break;
+                case 4:
+                    dialog = vm.checkBoxesDialog;
+                    break;
+                case 5:
+                    dialog = vm.checkBoxesGroupDialog;
+                    break;
+                default:
+                    return;
+            }
+            dialog.show(null, function (d) {
+                parent.items.push(new Item(vm, parent, ko.toJS(d)));
+            });
+        });
+    }
+    function editItem(vm, parent, item) {
+        // 選択した項目種別に応じたダイアログを表示し、
+        // 項目のダイアログに入力された内容をViewModelに反映する
+        var dialog;
+        if (item.type == 'text') {
+            dialog = (item.multiline) ? vm.textAreaDialog : vm.textBoxDialog;
+        } else if (item.type == 'choices') {
+            dialog = (item.multiselection) ? vm.checkBoxesDialog : vm.radioButtonsDialog;
+        } else if (item.type == 'choicesGroup') {
+            dialog = (item.multiselection) ? vm.checkBoxesGroupDialog : vm.radioButtonsGroupDialog;
+        } else {
+            return;
+        }
+        var index = parent.items.indexOf(item);
+        if (index < 0) {
+            return;
+        }
+        dialog.show(item, function (d) {
+            parent.items.splice(index, 1, new Item(vm, parent, ko.toJS(d)));
+        });
+    }
+
+    // セクションの編集ダイアログ
+    function SectionDialog(vm) {
+        var self = this;
+        self.text = ko.observable('');
+        self.show = function (args, callback) {
+            self._callback = callback;
+            // argsの値を使って初期化
+            args = args || {};
+            self.text(args.text || '');
+            $('#sectionModal').modal('show');
+        }
+        self.execute = function () {
+            $('#sectionModal').modal('hide');
+            var callback = self._callback;
+            if (typeof (callback) == 'function') {
+                delete self._callback;
+                callback(self);
+            }
+        };
+    }
+
+    // 項目の選択ダイアログ
+    function SelectItemDialog(vm) {
+        var self = this;
+        self.itemList = ko.observableArray([
+            { text: '自由回答（ショート）', value: 0 },
+            { text: '自由回答（ロング）', value: 1 },
+            { text: '選択回答', value: 2 },
+            { text: '選択回答（複数質問）', value: 3 },
+            { text: '複数選択回答', value: 4 },
+            { text: '複数選択回答（複数質問）', value: 5 },
+        ]);
+        self.selectedValue = ko.observable();
+        self.show = function (callback) {
+            self._callback = callback;
+            $('#selectItemModal').modal('show');
+        };
+        self.execute = function () {
+            $('#selectItemModal').modal('hide');
+            var callback = self._callback;
+            if (typeof (callback) == 'function') {
+                delete self._callback;
+                callback(self);
+            }
+        };
+    }
+
+    // TextBox または　TextAreaの編集ダイアログ
+    // TODO: 必須回答の対応
+    function TextItemDialog(vm, multiline) {
+        var self = this;
+        self.type = "text";
+        self.multiline = multiline;
+        self.text = ko.observable('');
+        self.show = function (args, callback) {
+            self._callback = callback;
+            // argsの値を使って初期化
+            args = args || {};
+            self.text(args.text || '');
+            if (multiline === false) {
+                $('#textBoxModal').modal('show');
+            } else {
+                $('#textAreaModal').modal('show');
+            }
+        };
+        self.execute = function () {
+            if (multiline === false) {
+                $('#textBoxModal').modal('hide');
+            } else {
+                $('#textAreaModal').modal('hide');
+            }
+            var callback = self._callback;
+            if (typeof (callback) == 'function') {
+                delete self._callback;
+                callback(self);
+            }
+        };
+    }
+
+    // RadioButton または　CheckBoxの編集ダイアログ
+    // TODO: 必須回答の対応
+    function ChoicesDialog(vm, multiselection) {
+        var self = this;
+        self.type = "choices";
+        self.multiselection = multiselection;
+        self.withTextBox = ko.observable(false);
+        self.text = ko.observable('');
+        self.choices = ko.observableArray();
+        self.other = ko.observable('');
+
+        self.addChoice = function (text) {
+            var wrappedObservable = ko.observable(ko.observable(text || ''));
+            self.choices.push(wrappedObservable);
+        };
+        self.removeChoiceAt = function (i) {
+            self.choices.splice(i, 1);
+        };
+        self.show = function (args, callback) {
+            self._callback = callback;
+            // argsの値を使って初期化
+            args = args || {};
+            self.withTextBox(args.withTextBox || false);
+            self.text(args.text || '');
+            self.choices.removeAll();
+            ko.utils.arrayForEach((args.choices || []), self.addChoice);
+            self.other(args.other || '');
+            if (multiselection === false) {
+                $('#radioButtonsModal').modal('show');
+            } else {
+                $('#checkBoxesModal').modal('show');
+            }
+        };
+        self.execute = function () {
+            if (multiselection === false) {
+                $('#radioButtonsModal').modal('hide');
+            } else {
+                $('#checkBoxesModal').modal('hide');
+            }
+            var callback = self._callback;
+            if (typeof (callback) == 'function') {
+                delete self._callback;
+                callback(self);
+            }
+        };
+
+    }
+
+    // RadioButtonGroup または　CheckBoxGroupの編集ダイアログ
+    // TODO: 必須回答の対応
+    function ChoicesGroupDialog(vm, multiselection) {
+        var self = this;
+        self.type = "choicesGroup";
+        self.multiselection = multiselection;
+        self.text = ko.observable('');
+        self.questions = ko.observableArray();
+        self.choices = ko.observableArray();
+
+        self.addChoice = function (text) {
+            var wrappedObservable = ko.observable(ko.observable(text || ''));
+            self.choices.push(wrappedObservable);
+        };
+        self.removeChoiceAt = function (i) {
+            self.choices.splice(i, 1);
+        };
+        self.addQuestion = function (text) {
+            var wrappedObservable = ko.observable(ko.observable(text || ''));
+            self.questions.push(wrappedObservable);
+        };
+        self.removeQuestionAt = function (i) {
+            self.questions.splice(i, 1);
+        };
+        self.show = function (args, callback) {
+            self._callback = callback;
+            // argsの値を使って初期化
+            args = args || {};
+            self.text(args.text || '');
+            self.questions.removeAll();
+            ko.utils.arrayForEach((args.questions || []), self.addQuestion);
+            self.choices.removeAll();
+            ko.utils.arrayForEach((args.choices || []), self.addChoice);
+            if (multiselection === false) {
+                $('#radioButtonsGroupModal').modal('show');
+            } else {
+                $('#checkBoxesGroupModal').modal('show');
+            }
+        };
+        self.execute = function () {
+            if (multiselection === false) {
+                $('#radioButtonsGroupModal').modal('hide');
+            } else {
+                $('#checkBoxesGroupModal').modal('hide');
+            }
+            var callback = self._callback;
+            if (typeof (callback) == 'function') {
+                delete self._callback;
+                callback(self);
+            }
+        };
+    }
+
+    // 項目のプレビュー
+    function Item(vm, parent, args) {
+        // argsの値を使って初期化
+        // observableにはしていない
+        var self = this;
+        ko.utils.extend(self, args);
+    }
+
+    // セクションのプレビュー
+    var Section = function (vm, args) {
+        // argsの値を使って初期化
+        args = args || {};
+        var self = this;
+        self.text = ko.observable(args.text || '');
+        self.items = ko.observableArray(
+            ko.utils.arrayMap(
+                (args.items instanceof Array) ? args.items : [],
+                function (item) { return new Item(vm, self, item); }
+            )
+        );
+
+        self.addItem = function () { addItem(vm, self); };
+        self.editItem = function (item) { editItem(vm, self, item); };
+        self.removeItem = function (item) { self.items.remove(item); };
+    };
+
+    // アンケートのプレビュー
+    var Questionnaire = function (vm, args) {
+        // argsの値を使って初期化
+        args = args || {};
+        var self = this;
+        self.title = ko.observable(args.title || '');
+        self.header = ko.observable(args.header || '');
+        self.footer = ko.observable(args.footer || '');
+        self.items = ko.observableArray(
+            ko.utils.arrayMap(
+                (args.items instanceof Array) ? args.items : [],
+                function (item) { return (item.items == null) ? new Item(vm, self, item) : new Section(vm, item); }
+            )
+        );
+
+        self.addItem = function () { addItem(vm, self); };
+        self.editItem = function (item) { editItem(vm, self, item); };
+        self.removeItem = function (item) { self.items.remove(item); };
+
+        self.addSection = function () {
+            vm.sectionDialog.show(null, function (d) {
+                // セクションのダイアログに入力された内容をViewModelに追加する
+                var text = d.text();
+                if (text) {
+                    self.items.push(new Section(vm, { text: text }));
+                }
+            });
+        };
+        self.editSection = function (section) {
+            var index = self.items.indexOf(section);
+            if (index < 0) {
+                return;
+            }
+            var section = self.items()[index];
+            vm.sectionDialog.show(ko.toJS(section), function (d) {
+                // セクションのダイアログに入力された内容をViewModelに反映する
+                var text = d.text();
+                if (text) {
+                    section.text(text);
+                }
+            });
+        };
+        self.removeSection = function (section) { self.items.remove(section); };
+    };
+
+    $(function () {
+        $hidden = $('input[type="hidden"][name="BodyJSON"]');
+        $form = $hidden.parents('form');
+        $form.submit(function () {
+            var json = ko.toJSON(viewModel.questionnairePreview);
+            $hidden.val(json);
+        });
+        
+        var args = null;
+        try {
+            var json = $hidden.val();
+            args = JSON.parse(json);
+        } catch (ex) {
+            // 握りつぶす
+        }
+
+        // 画面全体
+        // 子のモデルにViewModel自身を渡すことで、子からルートを参照できるようにする
+        var viewModel = {};
+        viewModel.sectionDialog = new SectionDialog(viewModel);
+        viewModel.selectItemDialog = new SelectItemDialog(viewModel);
+        viewModel.textBoxDialog = new TextItemDialog(viewModel, false);
+        viewModel.textAreaDialog = new TextItemDialog(viewModel, true);
+        viewModel.radioButtonsDialog = new ChoicesDialog(viewModel, false);
+        viewModel.radioButtonsGroupDialog = new ChoicesGroupDialog(viewModel, false);
+        viewModel.checkBoxesDialog = new ChoicesDialog(viewModel, true);
+        viewModel.checkBoxesGroupDialog = new ChoicesGroupDialog(viewModel, true);
+
+        viewModel.questionnairePreview = new Questionnaire(viewModel, args);
+
+        // 共通関数
+        viewModel.showItemDialog = function (dialog, parent, index) {
+            // parent is Questionnaire or Section
+
+            var current = null;
+            var length = parent.items().length;
+            if (0 <= index && index < length) {
+                current = parent.items()[index];
+            };
+            dialog.show(current, function (d) {
+                var newItem = new Item(viewModel, parent, ko.toJS(d));
+                var length = parent.items().length;
+                if (0 <= index && index < length) {
+                    // 更新 (削除して挿入することでknockout.jsに通知する)
+                    parent.items.splice(index, 1, newItem);
+                } else {
+                    // 追加
+                    parent.items.push(newItem);
+                }
+            });
+        };
+
+        viewModel.addOrEditItem = function (parent, child, dialog) {
+            // parent is Questionnaire or Section
+            var index = parent.items.indexOf(child);
+            if (index < 0) {
+                dialog.show(child, function (d) {
+                    // 追加
+                    parent.items.push(new Item(viewModel, parent, ko.toJS(d)));
+                });
+            } else {
+                dialog.show(child, function (d) {
+                    // 更新
+                    parent.items.splice(index, 1, new Item(viewModel, parent, ko.toJS(d)));
+                });
+            }
+        }
+
+
+        ko.applyBindings(viewModel.questionnairePreview, document.getElementById('displayArea'));
+        ko.applyBindings(viewModel.questionnairePreview, document.getElementById('inputHeader'));
+        ko.applyBindings(viewModel.questionnairePreview, document.getElementById('inputFooter'));
+
+        ko.applyBindings(viewModel.sectionDialog, document.getElementById('sectionModal'));
+        ko.applyBindings(viewModel.selectItemDialog, document.getElementById('selectItemModal'));
+        ko.applyBindings(viewModel.textBoxDialog, document.getElementById('textBoxModal'));
+        ko.applyBindings(viewModel.textAreaDialog, document.getElementById('textAreaModal'));
+        ko.applyBindings(viewModel.radioButtonsDialog, document.getElementById('radioButtonsModal'));
+        ko.applyBindings(viewModel.radioButtonsGroupDialog, document.getElementById('radioButtonsGroupModal'));
+        ko.applyBindings(viewModel.checkBoxesDialog, document.getElementById('checkBoxesModal'));
+        ko.applyBindings(viewModel.checkBoxesGroupDialog, document.getElementById('checkBoxesGroupModal'));
+
+    });
+
+</script>
+
+

@@ -1,0 +1,406 @@
+﻿@model NihonUnisys.Olyzae.Models.AnswerQuestionnaireViewModel
+
+@{
+    ViewBag.Title = "Answer";
+    var project = ViewBag.Project as NihonUnisys.Olyzae.Models.Project;
+}
+
+<h2>アンケートに回答する</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@Model.Questionnaire.Name</h4>
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Answer.ID)
+        @Html.HiddenFor(model => model.Answer.BodyJSON)
+        @Html.HiddenFor(model => model.Questionnaire.BodyJSON)
+
+        <div class="panel panel-default" id="displayArea">
+            <div class="panel-heading"><span data-bind="text: header"></span></div>
+            <div class="panel-body">
+                <div class="container" data-bind="template: { name: templateSelector, foreach: items}"></div>
+            </div>
+            <div class="panel-footer"><span data-bind="text: footer"></span></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="回答を送信する" class="btn btn-default" />
+    </div>
+}
+<div>
+    <a href="@Url.Action("Index", "Questionnaire", new { projectId = project.ID })" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;プロジェクト一覧へ戻る</a>
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/knockout-3.1.0.debug.js"></script>
+
+    <script>
+        var RadioButtonNamePrefix = "radioButton_";
+        var CheckBoxNamePrefix = "checkBox_";
+        var OtherTextBoxNamePrefix = "otherTextBox_";
+
+        function showText(data) {
+            return data || '(説明文)';
+        }
+        function showTitle(data) {
+            return data || '(質問)';
+        }
+        function showQuestion(data, index) {
+            return data || '(質問' + (1 + index) + ')';
+        }
+        function showChoice(data, index) {
+            return data || '(選択肢' + (1 + index) + ')';
+        }
+
+        // ラジオボタンのグループ化のため、name 属性値を生成する
+        function radioButtonName(questionIndex, rowIndex) {
+            return 'radioButton_' + questionIndex + '_' + rowIndex;
+        }
+
+        // チェックボックスのグループ化のため、name 属性値を生成する
+        function checkBoxName(questionIndex, rowIndex) {
+            return 'checkBox_' + questionIndex + '_' + rowIndex;
+        }
+
+        // その他の欄のテキストボックスの name 属性を生成する
+        function otherTextBoxName(questionIndex, rowIndex) {
+            return 'otherTextBox_' + questionIndex + '_' + rowIndex;
+        }
+
+        // その他がチェックされた時にテキストボックスを有効化する callback
+        function enableTextBox(element, textBoxName) {
+
+            $textBox = $("input[type='text'][name='" + textBoxName + "']")
+
+            if ($textBox === undefined || $textBox === null)
+                return;
+
+            if (element.checked) {
+                $textBox.prop('disabled', false);
+            } else {
+                $textBox.prop('disabled', true);
+                $textBox.val("");
+            }
+        }
+
+        //TODO: クラス名、関連などの整理
+
+        // アンケート回答
+        var AnswerItem = function (parent, json) {
+            var self = this;
+            self.type = parent.type; // 一応回答でも持つ
+            self.answerText = ko.observable(); // 自由回答欄
+
+            if (parent.isTypeChoicesOrChoicesGroup()) {
+
+                // その他欄
+                self.other = ko.observable();
+
+                // チェックボックスやラジオボタンの行に対応する配列
+                // item.type が 'choices' の場合も回答を rows に入れるものとする。
+                self.rows = ko.observableArray();
+
+                var questions = parent.getQuestions();
+                if (questions.length > 0) {
+                    for (var i = 0; i < questions.length; i++) {
+                        self.rows.push({
+                            questionText: questions[i],
+                            checked: parent.isMultiSelection() ? ko.observableArray() : ko.observable()
+                        });
+                    }
+                } else {
+                    self.rows.push({
+                        checked: parent.isMultiSelection() ? ko.observableArray() : ko.observable()
+                    })
+                }
+            }
+        }
+
+        // アンケート
+        var QuestionnaireItem = function (json) {
+            var self = this;
+            ko.utils.extend(self, json);
+        }
+        QuestionnaireItem.prototype = {
+            isMultiSelection: function () {
+                return this.multiselection;
+            }
+        };
+
+        // アンケート項目と回答項目の対。1つの質問に対応するクラス。
+        var Item = function (json) {
+            var self = this;
+            self.type = json.type;
+            self.questionnaire = new QuestionnaireItem(json);
+            self.answer = new AnswerItem(self, json);
+        }
+        Item.prototype = {
+            isType: function (type) {
+                return this.type === type;
+            },
+            isTypeChoicesOrChoicesGroup: function () {
+                return this.isType('choices') || this.isType('choicesGroup');
+            },
+            isMultiSelection: function () {
+                return this.questionnaire && this.questionnaire.isMultiSelection();
+            },
+            getQuestions: function () {
+                return this.questionnaire.questions ? this.questionnaire.questions : [];
+            }
+        };
+
+        // アンケートセクション
+        var Section = function (json) {
+            json = json || {};
+            var self = this;
+            self.text = ko.observable(json.text || '');
+            // 質問のJSONオブジェクトを元に、Itemを生成する
+            self.items = ko.observableArray(
+                ko.utils.arrayMap(
+                    (json.items instanceof Array) ? json.items : [],
+                    function (item) { return new Item(item); }
+                )
+            );
+
+            // セクションの中にはセクションが入らない前提で、
+            // Item の型をもとに使用するテンプレート名を決定する
+            self.templateSelector = function (item) {
+
+                if (item.isMultiSelection()) {
+                    return 'multi_' + item.type;
+                }
+
+                return item.type;
+            }
+        };
+
+        // アンケート
+        var Questionnaire = function (json) {
+            // jsonの値を使って初期化
+            json = json || {};
+            var self = this;
+            self.title = ko.observable(json.title || '');
+            self.header = ko.observable(json.header || '');
+            self.footer = ko.observable(json.footer || '');
+            self.items = ko.observableArray(
+                ko.utils.arrayMap(
+                    (json.items instanceof Array) ? json.items : [],
+                    function (item) { return (item.items) ? new Section(item) : new Item(item); }
+                )
+            );
+        };
+        Questionnaire.prototype = {
+            getAnswerObject: function () {
+                return new Answer(this);
+            }
+        }
+
+        // JSON形式に変換するため、回答クラスを定義する
+        var Answer = function (questionnaire) {
+            var self = this;
+            self.items = ko.observableArray(
+                ko.utils.arrayMap(
+                    questionnaire.items(),
+                    function (item) { return (item.items) ? new AnswerSection(item) : item.answer; }
+                )
+            );
+        }
+
+        var AnswerSection = function (section) {
+            var self = this;
+            self.text = section.text;
+            self.items = ko.observableArray(
+                ko.utils.arrayMap(
+                    section.items(),
+                    function (item) { return item.answer; }
+                )
+            );
+        }
+
+        $(function () {
+            // アンケートのJSON文字列をパースしてオブジェクト化
+            var json = null;
+            try {
+                var json = $('input[type="hidden"][name="Questionnaire.BodyJSON"]').val();
+                json = JSON.parse(json);
+            } catch (ex) {
+                // 握りつぶす
+            }
+
+            // JSONからビューモデルを生成
+            var viewModel = new Questionnaire(json);
+
+            // データから使用するテンプレート名を決定する callback
+            viewModel.templateSelector = function (item) {
+
+                // セクションである場合は特別扱い
+                if (item.constructor === Section) {
+                    return "section";
+                }
+
+                // テンプレートの中で multiselection 値を判定すると大変なので、
+                // このメソッドでテンプレート自体を切り替えてしまう方が楽
+                if (item.isMultiSelection()) {
+                    return 'multi_' + item.type;
+                }
+
+                return item.type;
+            };
+
+            // viewModel をバインド
+            ko.applyBindings(viewModel, document.getElementById('displayArea'));
+
+            var $answerBodyJson = $('input[type="hidden"][name="Answer.BodyJSON"]');
+            $answerBodyJson.closest('form')
+                .submit(function () {
+                    var json = ko.toJSON(viewModel.getAnswerObject());
+                    $answerBodyJson.val(json);
+                });
+
+            // 「その他」のチェック状態が変更された場合にテキストボックスの有効／無効を反転する
+            // TODO: ラジオボタンに対するclick バインドが上手くいかなかったので、複数選択解答（チェックボックス）の場合と処理方式が異なっている。可能なら統一する
+            $("input[type='radio'][name^='radioButton_']").on('change', function () {
+
+                // ラジオボタンの name 属性のサフィックスをテキストボックスの特定のために使用する。
+                var suffix = $(this).attr("name").replace("radioButton_", "");
+
+                // ラジオボタングループの末尾を「その他」であると想定している。
+                $radioButtons = $("input[type='radio'][name='" + $(this).attr('name') + "']");
+                $otherRadioButton = $radioButtons.eq($radioButtons.length - 1);
+                $textBox = $("input[type='text'][name='otherTextBox_" + suffix + "']");
+
+                // テキストボックスが見つからない場合は「その他」欄が無い場合として、終了
+                if (!$textBox[0])
+                    return;
+
+                if ($otherRadioButton.prop('checked')) {
+                    $textBox.prop('disabled', false);
+                } else {
+                    $textBox.prop('disabled', true);
+                    // TODO:ko.observable の方を空にできないか？ チェック外した時にその他欄の値が空にならないので。
+                    $textBox.val("");
+                }
+            });
+        });
+
+    </script>
+
+    <script id="section" type="text/html">
+        <section class="section" style="margin-bottom:2em;">
+            <h4 data-bind="text: text"></h4>
+            <hr />
+            <div data-bind="template: { name: templateSelector, foreach: items }"></div>
+        </section>
+    </script>
+
+    <script id="text" type="text/html">
+        <div class="questionnaire">
+            <h5 data-bind="text: showTitle(questionnaire.text)"></h5>
+            <div class="col-md-offset-1" data-bind="if: questionnaire.multiline">
+                <textarea class="form-control" data-bind="value: answer.answerText"></textarea>
+            </div>
+            <div class="col-md-offset-1" data-bind="ifnot: questionnaire.multiline">
+                <input type="text" class="form-control" data-bind="value: answer.answerText" />
+            </div>
+        </div>
+    </script>
+
+    <script id="choices" type="text/html">
+        <div class="questionnaire">
+            <h5 data-bind="text: showTitle(questionnaire.text)"></h5>
+            <div class="col-md-offset-1">
+                <!-- ko with: answer.rows()[0] -->
+                <!-- ko foreach: { data: $parent.questionnaire.choices, as: 'choice' } -->
+                <input type="radio" data-bind="value: showChoice(choice, $index()), checked: $parent.checked, attr: { name: radioButtonName($parentContext.$index() + 1, 1)}" />
+                <label data-bind="text: showChoice(choice, $index())"></label>
+                <!-- /ko -->
+                <span data-bind="if: $parent.questionnaire.withTextBox">
+                    <input type="radio" value="その他" data-bind="checked: checked, attr:{ name: radioButtonName($index() + 1, 1) }" />
+                    <label>その他</label>
+                    <input type="text" disabled="disabled" data-bind="value: $parent.answer.other, attr: { name: otherTextBoxName($index() + 1, 1)}" />
+                </span>
+                <!-- /ko -->
+            </div>
+        </div>
+    </script>
+
+    <script id="multi_choices" type="text/html">
+        <div class="questionnaire">
+            <h5 data-bind="text: showTitle(questionnaire.text)"></h5>
+            <div class="col-md-offset-1">
+                <!-- ko with: answer.rows()[0] -->
+                <!-- ko foreach: { data: $parent.questionnaire.choices, as: 'choice' } -->
+                <input type="checkbox" data-bind="value: showChoice(choice, $index()), checked: $parent.checked, attr: { name: checkBoxName($parentContext.$index() + 1, 1)}" />
+                <label data-bind="text: showChoice(choice, $index())"></label>
+                <!-- /ko -->
+                <span data-bind="if: $parent.questionnaire.withTextBox">
+                    <input type="checkbox" value="その他" data-bind="checked: checked, click: enableTextBox($element, otherTextBoxName($index() + 1, 1))" />
+                    <label>その他</label>
+                    <input type="text" disabled="disabled" data-bind="value: $parent.answer.other, attr: { name: otherTextBoxName($index() + 1, 1)}" />
+                </span>
+                <!-- /ko -->
+            </div>
+        </div>
+    </script>
+
+    <script id="choicesGroup" type="text/html">
+        <table class="table questionnaire">
+            <thead>
+                <tr>
+                    <th data-bind="text: questionnaire.text"></th>
+                    <!-- ko foreach: { data: questionnaire.choices, as: 'choice' } -->
+                    <th data-bind="text: showChoice(choice, $index())"></th>
+                    <!-- /ko -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: { data: answer.rows, as: 'row' } -->
+                <tr>
+                    <td data-bind="text: showQuestion(questionText, $index())"></td>
+                    <!-- ko foreach: { data: $parent.questionnaire.choices, as: 'choice' } -->
+                    <td>
+                        <input type="radio" data-bind="value: showChoice(choice, $index()), checked: $parent.checked, attr: { name: radioButtonName($parentContext.$parentContext.$index() + 1, $parentContext.$index() + 1) }" />
+                    </td>
+                    <!-- /ko -->
+                </tr>
+                <!-- /ko -->
+            </tbody>
+        </table>
+    </script>
+
+    <script id="multi_choicesGroup" type="text/html">
+        <table class="table questionnaire">
+            <thead>
+                <tr>
+                    <th data-bind="text: questionnaire.text"></th>
+                    <!-- ko foreach: { data: questionnaire.choices, as: 'choice' } -->
+                    <th data-bind="text: showChoice(choice, $index())"></th>
+                    <!-- /ko -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: { data: answer.rows, as: 'row' } -->
+                <tr>
+                    <td data-bind="text: showQuestion(questionText, $index())"></td>
+                    <!-- ko foreach: { data: $parent.questionnaire.choices, as: 'choice' } -->
+                    <td>
+                        <input type="checkbox" data-bind="value: showChoice(choice, $index()), checked: $parent.checked, attr: { name: checkBoxName($parentContext.$parentContext.$index() + 1, $parentContext.$index() + 1) }" />
+                    </td>
+                    <!-- /ko -->
+                </tr>
+                <!-- /ko -->
+            </tbody>
+        </table>
+    </script>
+
+    <style type="text/css">
+        .questionnaire {
+            margin-bottom: 1em;
+        }
+    </style>
+}

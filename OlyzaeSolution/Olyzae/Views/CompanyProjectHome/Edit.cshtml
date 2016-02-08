@@ -1,0 +1,130 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Project</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.Icon)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Name, new { @class="form-control" })
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description)
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.ProjectDate, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProjectDate)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Category, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Category)
+                @Html.ValidationMessageFor(model => model.Category)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Status)
+                @Html.ValidationMessageFor(model => model.Status)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectQuota, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProjectQuota)
+                @Html.ValidationMessageFor(model => model.ProjectQuota)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectApply, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.ProjectApply)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="uploadedFile">プロジェクトアイコン</label>
+            <div class="col-md-10">
+                <input type="file" id="uploadedFile" name="uploadedFile" class="form-control" /><br />
+                @Html.DisplayFor(model => model, "ProjectIcon")
+                <div class="olyzae-preview" style="display: none">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
+                    <img id="filePreview" class="img-thumbnail" src="data:image/png;base64," data-src="holder.js/100x100" alt="新しいアイコンのサムネール" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i> 戻る</a>
+</p>
+
+@section scripts {
+    @if (false)
+    {
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    }
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/holder.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if (window.FileReader) {
+                $('#uploadedFile').change(function () {
+                    var $this = $(this);
+                    var value = $this.val();
+                    if (!value) {
+                        $('.olyzae-preview').css({ display: 'none' });
+                        return;
+                    }
+                    var file = $(this).prop('files')[0];
+                    var fr = new FileReader();
+                    fr.onload = function() {
+                        $('#filePreview').attr('src', fr.result);
+                        $('.olyzae-preview').css({ display: 'inline-block' });
+                    }
+                    fr.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+}

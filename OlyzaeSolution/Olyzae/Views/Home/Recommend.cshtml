@@ -1,0 +1,31 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model IList<Project>
+
+@{
+    ViewBag.Title = "Recommend";
+}
+
+<h2>マイページ</h2>
+
+@Html.Partial("_MyPageMenuPartial", "Recommend")
+
+<h3>おすすめ</h3>
+
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item">
+            <h4 class="list-group-item-heading">@item.Name （@item.Company.CompanyName）</h4>
+            <div>
+                <div style="display: inline-block;vertical-align:top;">
+                    @Html.DisplayFor(model => item, "ProjectIcon")
+                </div>
+                <div style="display: inline-block;vertical-align:top;">
+                    <p>@item.Description</p>
+                    <p class="help-block">参加希望者 <strong>@item.ProjectApply</strong>/<strong>@item.ProjectQuota</strong> 人</p>
+                    @Html.ActionLink("詳細ページへ", "Details", "ProjectInfo", new { projectId = item.ID }, new { @class="btn btn-default" })
+                </div>
+            </div>
+        </li>
+    }
+</ul>

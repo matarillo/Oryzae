@@ -1,0 +1,111 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model Project
+
+@{
+    ViewBag.Title = "AssignGroup";
+    var users = (IList<ParticipantUser>)ViewBag.Users;
+    var groups = (IList<ProjectGroup>)ViewBag.Groups;
+    var selectedGroupId = (int)ViewBag.SelectedGroupId;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<style type="text/css">
+    .list-group-item.primary {
+        color: #ffffff;
+        background-color: #428bca;
+        border-color: #357ebd;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>ユーザー</h2>
+    </div>
+    <div class="col-md-6">
+        <h2>グループ</h2>
+    </div>
+</div>
+
+<div class="row" id="buttonsRow">
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "updateForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            var i = 0;
+            foreach (var user in users)
+            {
+                <input type="hidden" name="belongsToGroup[@(i)].Key" value="@user.ID" />
+                <input type="hidden" name="belongsToGroup[@(i)].Value" value="@(user.BelongsToGroup(selectedGroupId).ToString())" />
+                i++;
+            }
+
+            <p>
+                <a href="@Url.Action("Index")" class="btn btn-default btn-sm">キャンセル</a>
+                <button type="submit" class="btn btn-default btn-sm btn-primary">更新</button>
+            </p>
+        }
+    </div>
+</div>
+
+<div class="row" id="itemsRow">
+    <div class="col-md-6">
+        <div class="list-group" id="users">
+            @foreach (var user in users)
+            {
+                var active = user.BelongsToGroup(selectedGroupId) ? "active" : "";
+                <a href="#" class="list-group-item @active" data-user="@(user.ID)" data-display-name="@(user.DisplayName)">
+                    <h5 class="list-group-item-heading">
+                        @user.DisplayName
+                        @foreach (var group in user.Groups.Select(x => x.Group).OrderBy(g => g.ID))
+                        {
+                            <span class="label label-default">@group.GroupName</span>
+                        }
+                    </h5>
+                    <p class="list-group-item-text"><small>○×大学△△学部</small></p>
+                </a>
+            }
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <ul class="list-group" id="groups">
+            @foreach (var group in groups)
+            {
+                var @class = (@group.ID == selectedGroupId)
+                    ? "list-group-item primary"
+                    : "list-group-item";
+                <li class="@(@class)">
+                    <h5 class="list-group-item-heading">
+                        @(group.GroupName)
+                    </h5>
+                    <p class="list-group-item-text"><small>@(group.ParticipantUsers.Count)人</small></p>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#users .list-group-item").click(function () {
+            var $target = $(this);
+            $target.toggleClass("active");
+            var userId = $target.data("user");
+            var belongsToGroup = $target.hasClass("active");
+            var $inputs = $("#updateForm input[type=hidden]");
+            var $key = $inputs.filter("[value=" + userId + "]");
+            var name = $key.attr("name").replace(/\.Key$/, ".Value");
+            var $value = $inputs.filter(function () { return $(this).attr("name") == name; });
+            $value.val(belongsToGroup);
+
+        });
+    });
+</script>

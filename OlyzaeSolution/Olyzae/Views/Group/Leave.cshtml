@@ -1,0 +1,34 @@
+﻿@model NihonUnisys.Olyzae.Models.Group
+
+@{
+    ViewBag.Title = "Leave";
+}
+
+@Html.Partial("_ParticipantUserGroupMenuPartial", Model)
+
+<h2>退会</h2>
+
+<h3>このグループから退会しますか？</h3>
+<div>
+    <h4>グループ</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <a href="@Url.Action("Details", new { groupId = Model.ID })" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i> 戻る</a>
+            <input type="submit" value="退会する" class="btn btn-default" />
+        </div>
+    }
+</div>

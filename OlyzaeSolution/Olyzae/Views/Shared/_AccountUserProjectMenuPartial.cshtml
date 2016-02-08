@@ -1,0 +1,22 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">@Model.Name</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="example-navbar-1">
+            <ul class="nav navbar-nav">
+                @Html.MenuLink("プロジェクト情報", "Index", "CompanyProjectHome", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("プロジェクトページ", "Index", "CompanyProjectPage", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("配信リスト", "Index", "CompanyProjectInformation", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("ユーザー", "Index", "CompanyProjectUser", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("スレッド", "Index", "CompanyProjectThread", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("テーマ", "Index", "CompanyProjectTheme", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("評価", "Index", "CompanyProjectGroupWork", new { projectId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("アンケート", "Index", "CompanyProjectQuestionnaire", new { projectId = Model.ID }, new { ignoreAction = true })
+            </ul>
+        </div>
+    </div>
+</nav>

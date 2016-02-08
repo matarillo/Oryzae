@@ -1,0 +1,59 @@
+﻿@model System.Collections.Generic.IEnumerable<NihonUnisys.Olyzae.Models.Group>
+
+@{
+    ViewBag.Title = "Create";
+    System.Collections.Generic.List<int> joinGroups = (System.Collections.Generic.List<int>)ViewBag.JoinGroupIds;
+}
+
+<h2>新規作成</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true)
+
+        <h5>すでに登録済みのグループ</h5>
+        @if (Model != null && Model.Count() > 0)
+        {
+            <table>
+                @foreach (var group in Model)
+                {
+                    <tr>
+                        <td>@group.GroupName</td>
+                        <td>
+                            @if (joinGroups.Contains(group.ID))
+                            {
+                                <span>参加中</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <p>登録済みのグループはありません。</p>
+        }
+        <hr/>
+        <div class="form-group">
+            @Html.Label("グループ名", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Editor("GroupName", new { @class = "text-box single-line" })
+                @Html.ValidationMessage("GroupName")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="新規作成" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("グループ一覧へ戻る", "Index")
+</div>

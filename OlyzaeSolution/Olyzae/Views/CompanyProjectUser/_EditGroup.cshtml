@@ -1,0 +1,33 @@
+﻿<!-- Modal -->
+<div class="modal" id="editGroup" tabindex="-1" role="dialog" aria-labelledby="editGroupLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("EditGroup", "CompanyProjectUser", new { returnUrl = Request.Path }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("EditGroup.ID")
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editGroupLabel">グループ名を変更する</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+
+                        <div class="form-group">
+                            @Html.Label("EditGroup.GroupName", new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.Editor("EditGroup.GroupName")
+                                @Html.ValidationMessage("EditGroup.GroupName")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

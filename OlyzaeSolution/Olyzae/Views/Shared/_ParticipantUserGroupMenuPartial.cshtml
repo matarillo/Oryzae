@@ -1,0 +1,18 @@
+﻿@model NihonUnisys.Olyzae.Models.Group
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">@Model.GroupName</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="example-navbar-1">
+            <ul class="nav navbar-nav">
+                @Html.MenuLink("ホーム", "Details", "Group", new { groupId = Model.ID }, new { ignoreAction = false })
+                @Html.MenuLink("スレッド", "index", "GroupThread", new { groupId = Model.ID }, new { ignoreAction = true })
+                @Html.MenuLink("メンバー", "Members", "Group", new { groupId = Model.ID }, new { ignoreAction = false })
+                @Html.MenuLink("退会", "Leave", "Group", new { groupId = Model.ID }, new { ignoreAction = false })
+            </ul>
+        </div>
+    </div>
+</nav>

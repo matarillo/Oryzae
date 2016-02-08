@@ -1,0 +1,56 @@
+﻿@*@model NihonUnisys.Olyzae.Models.Thread*@
+@model IEnumerable<NihonUnisys.Olyzae.Models.Message>
+
+@{
+    ViewBag.Title = "Details";
+    System.Collections.Generic.Dictionary<int, string> userNames = (System.Collections.Generic.Dictionary<int, string>)ViewBag.UserNames;
+}
+
+<h2>詳細</h2>
+
+<div>
+    <h3>@Html.Raw("「" + ViewBag.ThreadName + "」のメッセージ")</h3>
+    @using (Html.BeginForm("Reply", "GroupThread"))
+    {
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.Label("本文", new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextArea("Body", (string)ViewBag.Body, new { @class = "text-box multi-line form-control", @rows = "5" })
+                    @Html.ValidationMessage("Body")
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="メッセージを投稿" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        @Html.Hidden("ThreadId", (int)ViewBag.ThreadId)
+    }
+    <hr />
+
+    @if (Model == null || Model.Count() == 0)
+    {
+        <p>メッセージはありません。</p>
+    }
+    else
+    {
+        @foreach (NihonUnisys.Olyzae.Models.Message message in Model)
+        {
+            <div>@Html.Encode(message.Body)</div>
+            <div>
+                Posted by @userNames[message.ID]
+                @if (message.Sent.HasValue)
+                {
+                    @Html.Encode(" at " + message.Sent.Value.ToString("yyyy/M/dd HH:mm"))
+                }
+            </div>
+            <br />
+        }
+    }
+</div>
+<p>
+    @Html.ActionLink("スレッド一覧へ戻る", "Index", new { groupId = ViewBag.GroupId })
+</p>

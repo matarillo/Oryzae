@@ -1,0 +1,50 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.ProjectGroup>
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+
+    ViewBag.Title = "Index";
+    var currentUser = ViewBag.CurrentUser as NihonUnisys.Olyzae.Models.ParticipantUser;
+    var project = ViewBag.Project as NihonUnisys.Olyzae.Models.Project;
+}
+
+<h2>プロジェクト「@project.Name」のグループ</h2>
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i>&nbsp;グループを新規作成</a>
+</p>
+
+@if (Model.Count() > 0)
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupName)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.GroupName, "Details", new { projectId = item.Project.ID, groupId = item.ID })
+                </td>
+                <td>
+                    @if (currentUser.BelongsToGroup(item.ID))
+                    {
+                        <span>参加中</span>
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+else
+{
+    <p>グループはありません。</p>
+}
+
+<p>
+    <a href="@Url.Action("Details", new { projectId = project.ID, controller = "ProjectInfo" })" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;プロジェクト詳細へ戻る</a>
+</p>

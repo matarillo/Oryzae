@@ -1,0 +1,144 @@
+﻿@using NihonUnisys.Olyzae.Models;
+@using NihonUnisys.Olyzae.Models.ProjectPages;
+@model Project
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+
+    ViewBag.Project = Model;
+    ViewBag.Title = "Details";
+    var projectPage = Model.ProjectPage ?? new ProjectPage();
+    var pageBody = projectPage.PageBody ?? new PageBody();
+}
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("json", projectPage.PageJSON)
+}
+
+<!-- ko if: sections().length -->
+<nav class="navbar navbar-default" role="navigation">
+    <ul class="nav nav-pills" data-bind="foreach: sections">
+        <li>
+            <a href="#" data-bind="attr: { href: '#section_' + $index() }, text: title"></a>
+        </li>
+    </ul>
+</nav>
+<!-- /ko -->
+
+<!-- ko foreach: sections -->
+<div class="panel panel-default" data-bind="attr: { id: 'section_' + $index() }">
+    <div class="panel-heading" data-bind="text: title"></div>
+    <!-- ko foreach: items -->
+    <!-- ko template: { name: 'item_' + type } -->
+    <!-- /ko -->
+    <!-- /ko -->
+</div>
+<!-- /ko -->
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/knockout-3.1.0.js"></script>
+
+<script id="item_heading" type="text/html">
+    <div class="panel-body">
+        <!-- ko if: size() == "big" -->
+        <h3 data-bind="text: headingText"></h3>
+        <!-- /ko -->
+        <!-- ko if: size() == "medium" -->
+        <h4 data-bind="text: headingText"></h4>
+        <!-- /ko -->
+        <!-- ko if: size() == "small" -->
+        <h5 data-bind="text: headingText"></h5>
+        <!-- /ko -->
+    </div>
+</script>
+
+<script id="item_image" type="text/html">
+    <div class="panel-body">
+        <img alt="" data-bind="attr: { src: getImage($data.image()) }, css: 'float_' + alignment()" />
+        <p data-bind="text: bodyText"></p>
+    </div>
+</script>
+
+<script id="item_text" type="text/html">
+    <div class="panel-body">
+        <p data-bind="text: bodyText"></p>
+    </div>
+</script>
+
+<script type="text/javascript">
+    function HeadingModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "heading";
+        this.headingText = ko.observable(args.headingText || "");
+        this.size = ko.observable(args.size || "big");
+    }
+
+    function ImageModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "image";
+        this.image = ko.observable(args.image || "0");
+        this.alignment = ko.observable(args.alignment || "left");
+        this.bodyText = ko.observable(args.bodyText || "");
+    }
+
+    function TextModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "text";
+        this.bodyText = ko.observable(args.bodyText || "");
+    }
+
+    function SectionModel(args) {
+        if (args == null) { args = {}; }
+        var self = this;
+        self.title = ko.observable(args.title || "");
+        self.items = ko.observableArray();
+        self.newItem = function (args) {
+            if (args.type == "heading") {
+                return new HeadingModel(args);
+            } else if (args.type == "image") {
+                return new ImageModel(args);
+            } else if (args.type == "text") {
+                return new TextModel(args);
+            }
+            return null;
+        }
+        var arr = (args.items instanceof Array) ? args.items : [];
+        arr.forEach(function (e) {
+            var newItem = self.newItem(e);
+            if (newItem) {
+                self.items.push(newItem);
+            }
+        });
+    }
+
+    function PageModel(args) {
+        if (args == null) { args = {}; }
+        this.backgroundImage = ko.observable(args.backgroundImage || 0);
+        this.sections = ko.observableArray();
+        var self = this;
+        if (args == null) { args = {}; }
+        var arr = (args.sections instanceof Array) ? args.sections : [];
+        arr.forEach(function (e) {
+            var section = new SectionModel(e);
+            self.sections.push(section);
+        });
+    }
+
+    function getImage(imageId) {
+        var baseUrl = "@Url.Action("ShowImage", new { id = "*" })";
+        return baseUrl.replace("*", imageId);
+    }
+
+    var viewModel = null;
+
+    $(function () {
+        try {
+            var parsed = JSON.parse($("#json").val());
+            viewModel = new PageModel(parsed);
+        } catch (e) {
+            viewModel = new PageModel();
+        }
+        ko.applyBindings(viewModel);
+    });
+</script>

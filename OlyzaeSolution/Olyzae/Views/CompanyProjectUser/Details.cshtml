@@ -1,0 +1,87 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model NihonUnisys.Olyzae.Models.ParticipantUser
+
+@{
+    ViewBag.Title = "Details";
+    var projects = ViewBag.Projects;
+    var projectGroup = ViewBag.ProjectGroup;
+
+    var today = ExecutionContext.Create().Now.Date;
+    var birthDate = Model.BirthDay;
+    var age = "";
+    if (birthDate != null)
+    {
+        int calculateAge = today.Year - birthDate.Year;
+        //誕生日がまだ来ていなければ、1引く
+        if (today.Month < birthDate.Month ||
+            (today.Month == birthDate.Month &&
+            today.Day < birthDate.Day))
+        {
+            calculateAge--;
+        }
+        age = calculateAge.ToString();
+    }
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>詳細</h2>
+<h4>ユーザ</h4>
+
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <label>年齢</label>
+        </dt>
+        <dd>
+            @age
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CareerAnchors)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CareerAnchors, "CareerAnchors")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Happpiness)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Happpiness)
+        </dd>
+    </dl>
+
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>プロジェクト名</th>
+                <th>グループ</th>
+                <th>評価</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in projects)
+            {
+                foreach (var pg in projectGroup)
+                {
+                <tr>
+                    <td>@project.Name</td>
+                    <td>@pg.GroupName</td>
+                    <td></td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<div>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+</div>
+
+

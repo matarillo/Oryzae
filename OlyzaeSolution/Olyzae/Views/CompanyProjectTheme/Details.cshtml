@@ -1,0 +1,47 @@
+﻿@model NihonUnisys.Olyzae.Models.Theme
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>詳細</h2>
+<h4>テーマ</h4>
+
+<p>
+    @Html.ActionLink("評価ページへ移動", "Index", "CompanyProjectGroupWork", new { projectId = Model.Project.ID, selectedThemeId = Model.ID }, new { @class = "btn btn-default" })
+    <a href="@Url.Action("Edit", new { themeId = Model.ID })" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i>&nbsp;編集</a>
+</p>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EvaluationKeys)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EvaluationKeys, "EvaluationKeys")
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+</div>

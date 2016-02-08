@@ -1,0 +1,483 @@
+﻿@model NihonUnisys.Olyzae.Models.ParticipantUser
+
+@{
+    ViewBag.Title = "SignUpParticipantUser";
+    var genders = new[]
+    {
+         new SelectListItem{Text="-",Value="0"},
+         new SelectListItem{Text="男性",Value="1"},
+         new SelectListItem{Text="女性",Value="2"}
+    };
+
+    var academicYearList = new[]
+    {
+        new SelectListItem{Text="-",Value="0"},
+        new SelectListItem{Text="中学生",Value="1"},
+        new SelectListItem{Text="高校1年（2017年高校卒）",Value="2"},
+        new SelectListItem{Text="高校2年（2016年高校卒）",Value="3"},
+        new SelectListItem{Text="高校3年（2015年高校卒）",Value="4"},
+        new SelectListItem{Text="浪人生",Value="5"},
+        new SelectListItem{Text="大学1年（2018年大学卒）",Value="6"},
+        new SelectListItem{Text="大学2年（2017年大学卒）",Value="7"},
+        new SelectListItem{Text="大学3年（2016年大学卒）",Value="8"},
+        new SelectListItem{Text="大学4年（2015年大学卒）",Value="9"},
+        new SelectListItem{Text="修士1年（2016年大学院卒）",Value="10"},
+        new SelectListItem{Text="修士2年（2015年大学院卒）",Value="11"},
+        new SelectListItem{Text="博士課程教育関係者",Value="12"},
+        new SelectListItem{Text="企業関係者",Value="13"},
+        new SelectListItem{Text="キャリアカウンセラー",Value="14"},
+        new SelectListItem{Text="保護者",Value="15"},
+        new SelectListItem{Text="その他",Value="16"}
+    };
+
+    var prefectureList = new[]
+    {
+        new SelectListItem{Text="-",Value="0"},
+        new SelectListItem { Text="北海道", Value="1" },
+        new SelectListItem { Text="青森県", Value="2" },
+        new SelectListItem { Text="岩手県", Value="3" },
+        new SelectListItem { Text="宮城県", Value="4" },
+        new SelectListItem { Text="秋田県", Value="5" },
+        new SelectListItem { Text="山形県", Value="6" },
+        new SelectListItem { Text="福島県", Value="7" },
+        new SelectListItem { Text="茨城県", Value="8" },
+        new SelectListItem { Text=" 栃木県", Value="9" },
+        new SelectListItem { Text=" 群馬県", Value="10" },
+        new SelectListItem { Text=" 埼玉県", Value="11" },
+        new SelectListItem { Text=" 千葉県", Value="12" },
+        new SelectListItem { Text=" 東京都", Value="13" },
+        new SelectListItem { Text=" 神奈川県", Value="14" },
+        new SelectListItem { Text="新潟県", Value="15" },
+        new SelectListItem { Text=" 富山県", Value="16" },
+        new SelectListItem { Text=" 石川県", Value="17" },
+        new SelectListItem { Text=" 福井県", Value="18" },
+        new SelectListItem { Text=" 山梨県", Value="19" },
+        new SelectListItem { Text=" 長野県", Value="20" },
+        new SelectListItem { Text=" 岐阜県", Value="21" },
+        new SelectListItem { Text=" 静岡県", Value="22" },
+        new SelectListItem { Text=" 愛知県", Value="23" },
+        new SelectListItem { Text="三重県", Value="24" },
+        new SelectListItem { Text=" 滋賀県", Value="25" },
+        new SelectListItem { Text=" 京都府", Value="26" },
+        new SelectListItem { Text=" 大阪府", Value="27" },
+        new SelectListItem { Text=" 兵庫県", Value="28" },
+        new SelectListItem { Text=" 奈良県", Value="29" },
+        new SelectListItem { Text=" 和歌山県", Value="30" },
+        new SelectListItem { Text="鳥取県", Value="31" },
+        new SelectListItem { Text=" 島根県", Value="32" },
+        new SelectListItem { Text=" 岡山県", Value="33" },
+        new SelectListItem { Text=" 広島県", Value="34" },
+        new SelectListItem { Text=" 山口県", Value="35" },
+        new SelectListItem { Text="徳島県", Value="36" },
+        new SelectListItem { Text=" 香川県", Value="37" },
+        new SelectListItem { Text=" 愛媛県", Value="38" },
+        new SelectListItem { Text=" 高知県", Value="39" },
+        new SelectListItem { Text="福岡県", Value="40" },
+        new SelectListItem { Text=" 佐賀県", Value="41" },
+        new SelectListItem { Text=" 長崎県", Value="42" },
+        new SelectListItem { Text=" 熊本県", Value="43" },
+        new SelectListItem { Text=" 大分県", Value="44" },
+        new SelectListItem { Text=" 宮崎県 ", Value="45" },
+        new SelectListItem { Text="鹿児島県", Value="46" },
+        new SelectListItem { Text="沖縄県", Value="47" }
+    };
+
+    var academicList = new[]
+    {
+        new SelectListItem{Text="-",Value="0"},
+        new SelectListItem { Text="外国語", Value="1" },
+        new SelectListItem { Text="外国文学", Value="2" },
+        new SelectListItem { Text="言語学", Value="3" },
+        new SelectListItem { Text="考古学", Value="4" },
+        new SelectListItem { Text="宗教学・特定宗教の教養研究", Value="5" },
+        new SelectListItem { Text="心理学", Value="6" },
+        new SelectListItem { Text="人文地理", Value="7" },
+        new SelectListItem { Text="地域研究", Value="8" },
+        new SelectListItem { Text="哲学", Value="9" },
+        new SelectListItem { Text="日本文学", Value="10" },
+        new SelectListItem { Text="美学", Value="11" },
+        new SelectListItem { Text="文化人類学", Value="12" },
+        new SelectListItem { Text="文芸学", Value="13" },
+        new SelectListItem { Text="歴史学", Value="14" },
+        new SelectListItem { Text="観光学", Value="15" },
+        new SelectListItem { Text="教育学", Value="16" },
+        new SelectListItem { Text="経営学", Value="17" },
+        new SelectListItem { Text="経済学", Value="18" },
+        new SelectListItem { Text="国際学", Value="19" },
+        new SelectListItem { Text="コミュニケーション学", Value="20" },
+        new SelectListItem { Text="社会学", Value="21" },
+        new SelectListItem { Text="商学", Value="22" },
+        new SelectListItem { Text="政治学", Value="23" },
+        new SelectListItem { Text="福祉学", Value="24" },
+        new SelectListItem { Text="法学", Value="25" },
+        new SelectListItem { Text="マスコミ学・メディア学", Value="26" },
+        new SelectListItem { Text="宇宙科学（天文学）", Value="27" },
+        new SelectListItem { Text="化学", Value="28" },
+        new SelectListItem { Text="自然地理", Value="29" },
+        new SelectListItem { Text="情報科学", Value="30" },
+        new SelectListItem { Text="自然人類学", Value="31" },
+        new SelectListItem { Text="数学", Value="32" },
+        new SelectListItem { Text="生命科学", Value="33" },
+        new SelectListItem { Text="生物学", Value="34" },
+        new SelectListItem { Text="地球科学", Value="35" },
+        new SelectListItem { Text="物理学", Value="36" },
+        new SelectListItem { Text="医用生体工学", Value="37" },
+        new SelectListItem { Text="応用物理・基礎工学", Value="38" },
+        new SelectListItem { Text="核融合・原子力工学", Value="39" },
+        new SelectListItem { Text="機械工学", Value="40" },
+        new SelectListItem { Text="経営工学", Value="41" },
+        new SelectListItem { Text="建築工学", Value="42" },
+        new SelectListItem { Text="材料工学", Value="43" },
+        new SelectListItem { Text="資源・エネルギー工学", Value="44" },
+        new SelectListItem { Text="情報工学", Value="45" },
+        new SelectListItem { Text="通信工学", Value="46" },
+        new SelectListItem { Text="生産・システム工学", Value="47" },
+        new SelectListItem { Text="船舶・航空宇宙", Value="48" },
+        new SelectListItem { Text="電気・電子工学", Value="49" },
+        new SelectListItem { Text="都市工学", Value="50" },
+        new SelectListItem { Text="土木工学", Value="51" },
+        new SelectListItem { Text="画像・音響工学", Value="52" },
+        new SelectListItem { Text="水産学", Value="53" },
+        new SelectListItem { Text="獣医・畜産学", Value="54" },
+        new SelectListItem { Text="農学", Value="55" },
+        new SelectListItem { Text="農芸化学", Value="56" },
+        new SelectListItem { Text="農業経済学", Value="57" },
+        new SelectListItem { Text="農業工学", Value="58" },
+        new SelectListItem { Text="林学", Value="59" },
+        new SelectListItem { Text="医学", Value="60" },
+        new SelectListItem { Text="看護学", Value="61" },
+        new SelectListItem { Text="公衆衛生学", Value="62" },
+        new SelectListItem { Text="歯学", Value="63" },
+        new SelectListItem { Text="神経科学", Value="64" },
+        new SelectListItem { Text="スポーツ・健康科学", Value="65" },
+        new SelectListItem { Text="薬学", Value="66" },
+        new SelectListItem { Text="リハビリ・放射線・臨床検査等", Value="67" },
+        new SelectListItem { Text="経営・事務系(医療系)", Value="68" },
+        new SelectListItem { Text="家政学・生活科学", Value="69" },
+        new SelectListItem { Text="食物学", Value="70" },
+        new SelectListItem { Text="児童学", Value="71" },
+        new SelectListItem { Text="住居学", Value="72" },
+        new SelectListItem { Text="被服学", Value="73" },
+        new SelectListItem { Text="音楽", Value="74" },
+        new SelectListItem { Text="デザイン", Value="75" },
+        new SelectListItem { Text="美術", Value="76" },
+        new SelectListItem { Text="芸術・その他", Value="77" },
+        new SelectListItem { Text="環境（工学系）", Value="78" },
+        new SelectListItem { Text="環境（社会系）", Value="79" },
+        new SelectListItem { Text="環境（理学系）", Value="80" },
+        new SelectListItem { Text="国際（社会系）", Value="81" },
+        new SelectListItem { Text="国際（人文系）", Value="82" },
+        new SelectListItem { Text="国際（法律・政治・経済系）", Value="83" },
+        new SelectListItem { Text="情報（コンピュータ系）", Value="84" },
+        new SelectListItem { Text="情報（社会系）", Value="85" },
+        new SelectListItem { Text="情報（生命系）", Value="86" },
+        new SelectListItem { Text="人間（からだ系）", Value="87" },
+        new SelectListItem { Text="人間（社会系）", Value="88" },
+        new SelectListItem { Text="人間（人文系）", Value="89" }
+
+    };
+
+    var careerAnchorsList = new[]
+    {
+        new SelectListItem{Text="-",Value="0"},
+        new SelectListItem{Text="管理能力",Value="1"} ,
+        new SelectListItem{Text="技術的・機能的能力",Value="2"} ,
+        new SelectListItem{Text="安全性",Value="3"} ,
+        new SelectListItem{Text="創造性",Value="4"} ,
+        new SelectListItem{Text="自律と独立",Value="5"} ,
+        new SelectListItem{Text="奉仕・社会献身",Value="6"} ,
+        new SelectListItem{Text="純粋な挑戦",Value="7"} ,
+        new SelectListItem{Text="ワーク・ライフバランス",Value="8"}
+    };
+
+    var answers = new[]
+    {
+        new SelectListItem { Text="新聞", Value="1" },
+        new SelectListItem { Text="ビラ", Value="2" },
+        new SelectListItem { Text="facebook", Value="3" },
+        new SelectListItem { Text="twitter", Value="4" },
+        new SelectListItem { Text="雑誌", Value="5" },
+        new SelectListItem { Text="テレビ", Value="6" },
+        new SelectListItem { Text="ポスター", Value="7" },
+        new SelectListItem { Text="知人から", Value="8" },
+        new SelectListItem { Text="トラック広告", Value="9" },
+        new SelectListItem { Text="その他", Value="10" }
+    };
+}
+
+<h2>サインアップ（参加者）</h2>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>ParticipantUser</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="uploadedFile">プロフィール画像</label>
+            <div class="col-md-10">
+                <input type="file" id="uploadedFile" name="uploadedFile" class="form-control" /><br />
+                <div class="olyzae-preview">
+                    @Html.EditorFor(model => model.ProfileImageDocumentID, "ProfileImage", new { id = "filePreview" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.UserName)
+                @Html.ValidationMessageFor(model => model.UserName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RawPassword, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RawPassword)
+                @Html.ValidationMessageFor(model => model.RawPassword)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DisplayName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DisplayName)
+                @Html.ValidationMessageFor(model => model.DisplayName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OnlineName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OnlineName)
+                @Html.ValidationMessageFor(model => model.OnlineName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Kana, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Kana)
+                @Html.ValidationMessageFor(model => model.Kana)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Gender, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Gender, genders)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BirthDay, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BirthDay)
+                @Html.ValidationMessageFor(model => model.BirthDay)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AcademicRecord, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AcademicRecord)
+                @Html.ValidationMessageFor(model => model.AcademicRecord)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Departments, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Departments)
+                @Html.ValidationMessageFor(model => model.Departments)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AcademicYear, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.AcademicYear, academicYearList)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EMailAddress, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EMailAddress)
+                @Html.ValidationMessageFor(model => model.EMailAddress)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PhoneNumber, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PhoneNumber)
+                @Html.ValidationMessageFor(model => model.PhoneNumber)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Zip, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Zip)
+                @Html.ValidationMessageFor(model => model.Zip)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.State, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.State, prefectureList)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.City)
+                @Html.ValidationMessageFor(model => model.City)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StreetAddress1, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StreetAddress1)
+                @Html.ValidationMessageFor(model => model.StreetAddress1)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StreetAddress2, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StreetAddress2)
+                @Html.ValidationMessageFor(model => model.StreetAddress2)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReturningHomeZip, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReturningHomeZip)
+                @Html.ValidationMessageFor(model => model.ReturningHomeZip)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReturningHomeState, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ReturningHomeState, prefectureList)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReturningHomeCity, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReturningHomeCity)
+                @Html.ValidationMessageFor(model => model.ReturningHomeCity)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReturningHomeStreetAddress1, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReturningHomeStreetAddress1)
+                @Html.ValidationMessageFor(model => model.ReturningHomeStreetAddress1)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReturningHomeStreetAddress2, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ReturningHomeStreetAddress2)
+                @Html.ValidationMessageFor(model => model.ReturningHomeStreetAddress2)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Academic, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Academic, academicList)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Happpiness, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Happpiness)
+                @Html.ValidationMessageFor(model => model.Happpiness)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CareerAnchors, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CareerAnchors, careerAnchorsList)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Mentor, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Mentor)
+                @Html.ValidationMessageFor(model => model.Mentor)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Answer, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <ul>
+                    @foreach (var item in answers)
+                    {
+                        <li>
+                            @Html.CheckBox("answer", false, htmlAttributes: new { value = item.Value }) @item.Text
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="新規登録" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+    @if (false)
+    {
+        // for IntelliSence
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    }
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/holder.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if (window.FileReader) {
+                $('#uploadedFile').change(function () {
+                    if (!$(this).val()) {
+                        return;
+                    }
+                    var file = $(this).prop('files')[0];
+                    var fr = new FileReader();
+                    fr.onload = function () {
+                        $('#filePreview').attr('src', fr.result);
+                        $('.olyzae-preview').css({ display: 'inline-block' });
+                    }
+                    fr.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+}

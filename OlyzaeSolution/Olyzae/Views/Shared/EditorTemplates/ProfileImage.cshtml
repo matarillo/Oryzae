@@ -1,0 +1,11 @@
+﻿@model Nullable<System.Guid>
+@{
+    var id = ViewData.ContainsKey("id") ? ViewData["id"].ToString() : "profileImage_annonymous";
+    var iconSource = Url.Content("~/Content/Images/defaultProfileImage_medium_2.png");
+
+    if (Model.HasValue)
+    {
+        iconSource = Url.Action("ProfileImage", "Document", new { id = Model });
+    }
+}
+<img id="@id" class="img-thumbnail" src="@iconSource" alt="プロフィール画像" style="width:126px; height:126px;">

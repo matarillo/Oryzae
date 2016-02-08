@@ -1,0 +1,60 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model CreateAccountUserViewModel
+
+@{
+    ViewBag.Title = "CreateCompleted";
+    var companyId = (int)ViewBag.CompanyId;
+}
+
+<h2>新規作成</h2>
+
+<div>
+    <h4>作成した企業ユーザー</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Organization)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Organization)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RawPassword)
+        </dt>
+
+        <dd>
+            <code>@Html.DisplayFor(model => model.RawPassword)</code> （パスワードはハッシュ化して保存されます。）
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+    <a href="@Url.Action("Edit", new { companyId = companyId })" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i>&nbsp;編集</a>
+</p>

@@ -1,0 +1,11 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model GroupWorkStatus
+@{
+    var itemList = new[]
+    {
+        new SelectListItem { Text = "未提出", Value = GroupWorkStatus.Default.ToString(), Selected = (Model == GroupWorkStatus.Default) },
+        new SelectListItem { Text = "未評価", Value = GroupWorkStatus.Submitted.ToString(), Selected = (Model == GroupWorkStatus.Submitted) },
+        new SelectListItem { Text = "評価済み", Value = GroupWorkStatus.Evaluated.ToString(), Selected = (Model == GroupWorkStatus.Evaluated) },
+    };
+}
+@Html.DropDownList("", itemList)

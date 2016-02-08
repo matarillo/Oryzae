@@ -1,0 +1,37 @@
+﻿@model int
+@{
+    var text = "";
+    switch (Model)
+    {
+        case 0:
+            text = "-";
+            break;
+        case 1:
+            text = "管理能力";
+            break;
+        case 2:
+            text = "技術的";
+            break;
+        case 3:
+            text = "安全性";
+            break;
+        case 4:
+            text = "創造性";
+            break;
+        case 5:
+            text = "自律と独立";
+            break;
+        case 6:
+            text = "奉仕・社会献身";
+            break;
+        case 7:
+            text = "純粋な挑戦";
+            break;
+        case 8:
+            text = "ワーク・ライフバランス";
+            break;
+        default:
+            break;
+    }
+}
+@text

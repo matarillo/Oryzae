@@ -1,0 +1,5 @@
+﻿@model NihonUnisys.Olyzae.Models.ProjectStatus
+@Html.DropDownList(
+    "",
+    Model.ToNextStates().Select(x => new SelectListItem { Text = x.ToText(), Value = x.ToValue() }),
+    new { @class="form-control" })

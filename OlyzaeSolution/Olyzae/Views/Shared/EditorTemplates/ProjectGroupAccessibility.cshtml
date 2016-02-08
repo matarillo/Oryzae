@@ -1,0 +1,10 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model ProjectGroupAccessibility?
+@{
+    var itemList = new[]
+    {
+        new SelectListItem{ Text="公開", Value=ProjectGroupAccessibility.Public.ToString(), Selected=(Model == ProjectGroupAccessibility.Public)},
+        new SelectListItem{Text="非公開", Value=ProjectGroupAccessibility.Internal.ToString(), Selected = (Model== ProjectGroupAccessibility.Internal)}
+    };
+}
+@Html.DropDownList("", itemList, "公開範囲を選択")

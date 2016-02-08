@@ -1,0 +1,50 @@
+﻿@model NihonUnisys.Olyzae.Models.GroupWork
+
+@{
+    ViewBag.Title = "Details";
+    var theme = ViewBag.Theme as NihonUnisys.Olyzae.Models.Theme;
+    var evaluation = Model.Evaluation;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>課題テーマに対する評価</h2>
+
+<div>
+    <h4>詳細</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProjectGroup)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ProjectGroup.GroupName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AttachedFileName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AttachedFileName)
+        </dd>
+
+        @foreach (var key in theme.EvaluationKeys)
+        {
+            <dt>@key</dt>
+            <dd>@(Model.EvaluationValue(key))</dd>
+        }
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編集", "Edit", new { themeId = Model.ThemeID, projectGroupId = Model.ProjectGroupID }) |
+    @Html.ActionLink("一覧へ戻る", "Index", new { selectedThemeId = theme.ID })
+</p>

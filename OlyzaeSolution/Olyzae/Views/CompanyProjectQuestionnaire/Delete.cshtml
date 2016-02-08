@@ -1,0 +1,41 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>削除</h2>
+
+<h3>このアンケートを本当に削除しますか？</h3>
+<div>
+    <h4>アンケート</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Questioned)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Questioned)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+            <button type="submit" class="btn btn-primary">削除</button>
+        </div>
+    }
+</div>

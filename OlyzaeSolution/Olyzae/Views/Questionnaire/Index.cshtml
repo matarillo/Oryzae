@@ -1,0 +1,51 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Answer>
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    ViewBag.Title = "Index";
+    var project = ViewBag.Project as NihonUnisys.Olyzae.Models.Project;
+}
+
+<h2>アンケート一覧</h2>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Questionnaire.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Questionnaire.Questioned)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Answered)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Questionnaire.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Questionnaire.Questioned)
+            </td>
+            <td>
+                @if (!item.Answered.HasValue)
+                {
+                    @Html.Raw("未回答");
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Answered)
+                }
+            </td>
+            <td>
+                @if (!item.Answered.HasValue)
+                {
+                    @Html.ActionLink("回答する", "Answer", "Questionnaire", new { projectId = project.ID, questionnaireId = item.Questionnaire.ID }, null)
+                }
+            </td>
+        </tr>
+    }
+</table>

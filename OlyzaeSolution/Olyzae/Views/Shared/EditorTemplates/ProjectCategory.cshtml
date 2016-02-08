@@ -1,0 +1,24 @@
+﻿@model NihonUnisys.Olyzae.Models.ProjectCategory
+@using NihonUnisys.Olyzae.Models
+@{
+    // 表示順に並べた ProjectCategory
+    IList<ProjectCategory> sortedProjectCategories = new List<ProjectCategory>()
+    {
+        ProjectCategory.Career,
+        ProjectCategory.Internship,
+        ProjectCategory.Arbeit,
+        ProjectCategory.Study,
+        ProjectCategory.Travel,
+        ProjectCategory.Event,
+        ProjectCategory.Default,
+    };
+
+    IEnumerable<SelectListItem> listItems = sortedProjectCategories.Select(category => new SelectListItem()
+    {
+        Text = category.ToText(),
+        Value = ((int)category).ToString(),
+        Selected = Model.Equals(category)
+    });
+
+    @Html.DropDownList("", listItems, new { @class = "form-control" });
+}

@@ -1,0 +1,502 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@if (false)
+{
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
+}
+
+<!-- Modal セクション-->
+<div class="modal fade" id="sectionModal" tabindex="-1" role="dialog" aria-labelledby="sectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="sectionModalLabel">セクションの追加</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="inputSectionTitle">セクションの見出し</label>
+                    <input type="text" class="form-control" id="inputSectionTitle" placeholder="見出しを入力してください" data-bind="value: text">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">追加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 質問-->
+<div class="modal fade" id="selectItemModal" tabindex="-1" role="dialog" aria-labelledby="selectItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="selectItemModalLabel">項目の追加</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <select size="6" class="form-control"
+                            data-bind="options: itemList, optionsText: 'text', value: selectedValue"></select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">次へ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal 自由回答（ショート） -->
+<!-- textBoxModalを作った。以下同様にしたい。 -->
+<div class="modal fade" id="textBoxModal" tabindex="-1" role="dialog" aria-labelledby="textBoxModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="textBoxModalLabel">自由回答（ショート）</h4>
+            </div>
+            <div class="modal-body">
+
+                <!-- panelTextBoxを移動して、idを削除した。 -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="textbox1">質問</label>
+                                <input type="text" class="form-control" id="textbox1" placeholder="質問を入力してください" data-bind="value: text" />
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <p class="help-block">回答の入力欄としてテキストボックスを使用します。</p>
+                                <label data-bind="text: showTitle(text())"></label>
+                                <input type="text" class="form-control" disabled="disabled" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 自由回答（ロング） -->
+<!-- panelTextBoxは移動した。以下同様にしたい。 -->
+<div class="modal fade" id="textAreaModal" tabindex="-1" role="dialog" aria-labelledby="textAreaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="textAreaModalLabel">自由回答（ロング）</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="textarea1">質問</label>
+                                <input type="text" class="form-control" id="textarea1" placeholder="質問を入力してください" data-bind="value: text" />
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <p class="help-block">回答の入力欄としてテキストエリアを使用します。</p>
+                                <label data-bind="text: showTitle(text())"></label>
+                                <textarea class="form-control dialog-textarea" rows="3" disabled="disabled"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 選択回答 -->
+<!-- ダイアログの中身のモック -->
+<div class="modal fade" id="radioButtonsModal" tabindex="-1" role="dialog" aria-labelledby="radioButtonsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="radioButtonsModalLabel">選択回答</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="radiobutton1">質問</label>
+                                    <input type="text" class="form-control" id="radiobutton1" placeholder="質問を入力してください" data-bind="value: text" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>回答の選択肢</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach:choices -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'choicesRadioButtons' + (1 + $index()) }">選択肢<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="選択肢を入力してください" data-bind="attr: { id: 'choicesRadioButtons' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeChoiceAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addChoice('')"><span class="glyphicon glyphicon-plus"></span>選択肢を追加する</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" data-bind="checked: withTextBox">最後の選択肢は自由回答欄にする
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <p class="help-block">回答の入力欄としてラジオボタンを使用します。</p>
+                                    <label data-bind="text: showTitle(text())"></label>
+                                    <br />
+                                    <!-- ko foreach: { data: choices, as: 'choice' } -->
+                                    <label>
+                                        <input type="radio" disabled="disabled" /><span data-bind="text: showChoice(choice(), $index())"></span>
+                                    </label>
+                                    <!-- /ko -->
+                                    <label data-bind="if: withTextBox">
+                                        <input type="radio" disabled="disabled">
+                                        その他
+                                        <input type="text" disabled="disabled">
+                                    </label>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 選択回答（複数質問） -->
+<!-- ダイアログの中身のモック -->
+<div class="modal fade" id="radioButtonsGroupModal" tabindex="-1" role="dialog" aria-label="radioButtonsGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="radioButtonsGroupModalLabel">選択回答（複数質問）</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="title">説明文</label>
+                                    <input type="text" class="form-control" id="title" placeholder="例：各質問に対して、それぞれの選択肢から回答してください。" data-bind="value: text" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>質問</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach: questions -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'questionsRadioButtons' + (1 + $index()) }">質問<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="質問を入力してください" data-bind="attr: { id: 'questionsRadioButtons' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeQuestionAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addQuestion('')"><span class="glyphicon glyphicon-plus"></span>質問を追加する</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>回答の選択肢</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach: choices -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'choicesRadioButtons' + (1 + $index()) }">選択肢<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="選択肢を入力してください" data-bind="attr: { id: 'choicesRadioButtons' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeChoiceAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addChoice('')"><span class="glyphicon glyphicon-plus"></span>選択肢を追加する</button>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12">
+                                <p class="help-block">回答の入力欄として、複数の質問に対しラジオボタンを使用します。</p>
+                                <label data-bind="text: showText(text())"></label>
+                            </div>
+                            <div class="container">
+                                <div class="dialog-table">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>質問</th>
+                                                <!-- ko foreach: { data: choices, as: 'choice' } -->
+                                                <th data-bind="text: showChoice(choice(), $index())"></th>
+                                                <!-- /ko -->
+                                            </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: { data: questions, as: 'question' }">
+                                            <tr>
+                                                <td data-bind="text: showQuestion(question(), $index())"></td>
+                                                <!-- ko foreach: { data: $parent.choices, as: 'choice' } -->
+                                                <td>
+                                                    <input type="radio" disabled="disabled">
+                                                </td>
+                                                <!-- /ko -->
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal 複数選択回答 -->
+<!-- ダイアログの中身のモック -->
+<div class="modal fade" id="checkBoxesModal" tabindex="-1" role="dialog" aria-labelledby="checkBoxesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="checkBoxesModalLabel">複数選択回答</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="radiobutton1">質問</label>
+                                    <input type="text" class="form-control" id="radiobutton1" placeholder="質問を入力してください" data-bind="value: text" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>回答の選択肢</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach:choices -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'choicesCheckBoxes' + (1 + $index()) }">選択肢<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="選択肢を入力してください" data-bind="attr: { id: 'choicesCheckBoxes' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeChoiceAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addChoice('')"><span class="glyphicon glyphicon-plus"></span>選択肢を追加する</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" data-bind="checked: withTextBox">最後の選択肢は自由回答欄にする
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <p class="help-block">回答の入力欄としてチェックボックスを使用します。</p>
+                                    <label data-bind="text: showTitle(text())"></label>
+                                    <br />
+                                    <!-- ko foreach: { data: choices, as: 'choice' } -->
+                                    <label>
+                                        <input type="checkbox" disabled="disabled" /><span data-bind="text: showChoice(choice(), $index())"></span>
+                                    </label>
+                                    <!-- /ko -->
+                                    <label data-bind="if: withTextBox">
+                                        <input type="checkbox" disabled="disabled">
+                                        その他
+                                        <input type="text" disabled="disabled">
+                                    </label>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal 複数選択回答（複数質問） -->
+<!-- ダイアログの中身のモック -->
+<div class="modal fade" id="checkBoxesGroupModal" tabindex="-1" aria-labelledby="checkBoxesGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="checkBoxesGroupModalLabel">複数選択回答（複数質問）</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-horizontal col-sm-12">
+                                <h4>複数選択回答（複数質問）</h4>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="title">説明文</label>
+                                    <input type="text" class="form-control" id="title" placeholder="例：各質問に対して、それぞれの選択肢から回答してください。" data-bind="value: text" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>質問</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach: questions -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'questionsCheckBoxes' + (1 + $index()) }">質問<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="質問を入力してください" data-bind="attr: { id: 'questionsCheckBoxes' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeQuestionAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addQuestion('')"><span class="glyphicon glyphicon-plus"></span>質問を追加する</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label>回答の選択肢</label>
+                                </div>
+                            </div>
+                            <!-- ko foreach: choices -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" data-bind="attr: { for: 'choicesCheckBoxes' + (1 + $index()) }">選択肢<span data-bind="    text: 1 + $index()"></span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="選択肢を入力してください" data-bind="attr: { id: 'choicesCheckBoxes' + (1 + $index()) }, value: $data" />
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-default pull-right" data-bind="click: function () { $parent.removeChoiceAt($index()) }"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-default" data-bind="click: addChoice('')"><span class="glyphicon glyphicon-plus"></span>選択肢を追加する</button>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <p class="help-block">回答の入力欄として、複数の質問に対してチェックボックスを使用します。</p>
+                                    <label data-bind="text: showText(text())"></label>
+                                    <div class="container">
+                                        <div class="dialog-table">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>質問</th>
+                                                        <!-- ko foreach: { data: choices, as: 'choice' } -->
+                                                        <th data-bind="text: showChoice(choice(), $index())"></th>
+                                                        <!-- /ko -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody data-bind="foreach: { data: questions, as: 'question' }">
+                                                    <tr>
+                                                        <td data-bind="text: showQuestion(question(), $index())"></td>
+                                                        <!-- ko foreach: { data: $parent.choices, as: 'choice' } -->
+                                                        <td>
+                                                            <input type="checkbox" disabled="disabled">
+                                                        </td>
+                                                        <!-- /ko -->
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" data-bind="click: execute">決定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,92 @@
+﻿@model NihonUnisys.Olyzae.Models.Theme
+
+@if (false)
+{
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
+}
+
+<!-- Modal -->
+<div class="modal" id="addDialog" tabindex="-1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="addDialogLabel">新しく評価項目を追加する</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">評価項目</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" data-bind="value: name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: doAdd">追加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="editDialog" tabindex="-1" role="dialog" aria-labelledby="editDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editDialogLabel">評価項目を変更する</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">評価項目</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" data-bind="value: name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: doEdit">変更</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" id="deleteDialog" tabindex="-1" role="dialog" aria-labelledby="deleteDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="deleteDialogLabel">評価項目を削除する</h4>
+                </div>
+                <div class="modal-body">
+                    <p>この評価項目を削除しますか？</p>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            <span>評価項目</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="text: name"></span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: doDelete">削除</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

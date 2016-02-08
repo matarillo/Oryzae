@@ -1,0 +1,50 @@
+﻿@using NihonUnisys.Olyzae.Models;
+@model IEnumerable<Group>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>グループ一覧</h2>
+
+<p>
+    @Html.ActionLink("プライベートグループを作成する", "Create", null, new { @class = "btn btn-default btn-sm" })
+</p>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#">参加しているグループ</a></li>
+    <li><a href="#">自分が管理しているグループ</a></li>
+    <li><a href="#">すべてのグループ</a></li>
+</ul>
+
+@if (Model == null)
+{
+    <p>あなたが参加しているグループはありません。</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            var projectGroup = item as ProjectGroup;
+            if (projectGroup == null)
+            {
+                <a href="@Url.Action("Details", null, new { groupId = item.ID })" class="list-group-item">
+                    <h4 class="list-group-item-heading">@item.GroupName</h4>
+                    <p class="list-group-item-text">プライベートグループ</p>
+                </a>
+            }
+            else
+            {
+                if (projectGroup.Accessibility == ProjectGroupAccessibility.Public)
+                {
+                    <a href="@Url.Action("Details", null, new { groupId = item.ID })" class="list-group-item">
+                        <h4 class="list-group-item-heading">@item.GroupName</h4>
+                        <p class="list-group-item-text">@(projectGroup.Project.Name)のグループ</p>
+                    </a>
+                }
+            }
+        }
+    </div>
+}
+

@@ -1,0 +1,11 @@
+﻿@model int?
+@{
+    var itemList = new List<SelectListItem>();
+    for (var value = 0; value <= 10; value++)
+    {
+        var valueString = value.ToString();
+        var selected = (Model == value);
+        itemList.Add(new SelectListItem { Text = valueString, Value = valueString, Selected = selected });
+    }
+}
+@Html.DropDownList("", itemList, "評価値を選択")

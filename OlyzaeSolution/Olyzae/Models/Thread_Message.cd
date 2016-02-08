@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="■お知らせ関連&#xD;&#xA;・ProjectThread…お知らせのスレッド。&#xD;&#xA;・ParticipantUserThread…お知らせの送信先ユーザーを表す。ProjectThreadのIDと、送信先参加者ユーザーのIDを外部キーに持つ。&#xD;&#xA;・Message…お知らせの内容およびそれに対するメッセージを表す。ProjectThreadのIDを外部キーに持つ。&#xD;&#xA;&#xD;&#xA;■グループ別スレッド&#xD;&#xA;・GroupThread…グループ別スレッド。&#xD;&#xA;・Message…スレッドに投稿されたメッセージを表す。GroupThreadのIDを外部キーに持つ。&#xD;&#xA;&#xD;&#xA;■ユーザーの日記&#xD;&#xA;・PersonalThread…レコード1つで日記1つ分を表す。&#xD;&#xA;・Message…日記の内容、およびそれに寄せられたコメントを表す。PersonalThreadのIDを外部キーに持つ。&#xD;&#xA;&#xD;&#xA;■ユーザー同士のメッセージのやり取り&#xD;&#xA;・Message…メッセージ本文。また、メッセージを送信したユーザーを持つ。&#xD;&#xA;・UserMessage…メッセージの送信先を表す。&#xD;&#xA;※この場合、MessageはThreadとの関連を持たない。">
+    <Position X="1.275" Y="5.977" Height="3.424" Width="8.339" />
+  </Comment>
+  <Comment CommentText="多対多">
+    <Position X="7.083" Y="2.49" Height="0.333" Width="0.7" />
+  </Comment>
+  <Comment CommentText="多対多">
+    <Position X="12.552" Y="4.479" Height="0.333" Width="0.7" />
+  </Comment>
+  <Comment CommentText="お知らせ（ProjectThread）の公開開始／終了日時を表しているが、適切な設計とは言えない。">
+    <Position X="4.968" Y="0.604" Height="0.885" Width="1.94" />
+  </Comment>
+  <Class Name="NihonUnisys.Olyzae.Models.Project" Collapsed="true">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAUEgAAigAAQACAAABSEAAAAAAAAAAAABBECCAQ=</HashCode>
+      <FileName>Models\Project.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Group" Collapsed="true">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQAAAAAAAAAAQAAAAAgAAE=</HashCode>
+      <FileName>Models\Group.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ProjectGroup" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <AssociationLine Name="Project" Type="NihonUnisys.Olyzae.Models.Project" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="2.115" />
+        <Point X="2.062" Y="2.115" />
+        <Point X="2.062" Y="1.102" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.018" Y="0.027" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAACAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProjectGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ProjectThread" Collapsed="true">
+    <Position X="0.75" Y="5" Width="1.5" />
+    <AssociationLine Name="Project" Type="NihonUnisys.Olyzae.Models.Project" FixedToPoint="true">
+      <Path>
+        <Point X="1.125" Y="5" />
+        <Point X="1.125" Y="1.102" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.077" Y="0.052" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProjectThread.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.GroupThread" Collapsed="true">
+    <Position X="2.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\GroupThread.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Group" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.PersonalThread" Collapsed="true">
+    <Position X="4.5" Y="5" Width="1.5" />
+    <AssociationLine Name="OwnerUser" Type="NihonUnisys.Olyzae.Models.ParticipantUser" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6" Y="5.375" />
+        <Point X="8.688" Y="5.375" />
+        <Point X="8.688" Y="1.481" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.581" Y="0.189" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PersonalThread.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="OwnerUser" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Thread" Collapsed="true">
+    <Position X="4.75" Y="3.25" Width="1.5" />
+    <AssociationLine Name="ReceivedUsers" Type="NihonUnisys.Olyzae.Models.ParticipantUserThread" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.25" Y="3.562" />
+        <Point X="7.812" Y="3.562" />
+        <Point X="7.812" Y="2.852" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAACgAAAAAAAAAAAAAAAAACAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\Thread.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Duration" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ReceivedUsers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUser" Collapsed="true">
+    <Position X="7.5" Y="0.75" Width="1.75" />
+    <InheritanceLine Type="NihonUnisys.Olyzae.Models.User" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.5" Y="0.938" />
+        <Point X="9.25" Y="0.938" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAQAAEgAAIIIAgGKGKggSIAAAACIAAAAAABABgIAgQA=</HashCode>
+      <FileName>Models\ParticipantUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Threads" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Message" Collapsed="true">
+    <Position X="9.25" Y="4.25" Width="1.25" />
+    <AssociationLine Name="SentUser" Type="NihonUnisys.Olyzae.Models.User" FixedFromPoint="true">
+      <Path>
+        <Point X="10.25" Y="4.25" />
+        <Point X="10.25" Y="1.176" />
+        <Point X="10.5" Y="1.176" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.091" Y="-0.494" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Thread" Type="NihonUnisys.Olyzae.Models.Thread" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="9.25" Y="4.562" />
+        <Point X="8.771" Y="4.562" Type="JumpStart" />
+        <Point X="8.604" Y="4.562" Type="JumpEnd" />
+        <Point X="5.938" Y="4.562" />
+        <Point X="5.938" Y="3.852" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.836" Y="0.205" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAgAAAAAABQAAAQAAAAIiAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Message.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SentUser" />
+      <Property Name="Thread" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ReceivedUsers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.User" Collapsed="true">
+    <Position X="10.5" Y="0.75" Width="1.25" />
+    <AssociationLine Name="ReceivedMessages" Type="NihonUnisys.Olyzae.Models.UserMessage" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11.75" Y="1.125" />
+        <Point X="12.375" Y="1.125" />
+        <Point X="12.375" Y="4.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.093" Y="0.265" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAQEAAAAAAAgAIAEAACIAAAAAAACAADCQAAAAAAAAA=</HashCode>
+      <FileName>Models\User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ReceivedMessages" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUserThread" Collapsed="true">
+    <Position X="6.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAgAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Models\ParticipantUserThread.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.UserMessage" Collapsed="true">
+    <Position X="12" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAEAAAAAgAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\UserMessage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Duration" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Duration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="メイリオ" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,52 @@
+﻿@model NihonUnisys.Olyzae.Models.GroupWork
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>課題テーマに対する評価</h2>
+
+<h3>削除</h3>
+<div>
+    <h4>この評価を本当に削除しますか？</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProjectGroup)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProjectGroup.GroupName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AttachedFileName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AttachedFileName)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.Hidden("themeId", Model.ThemeID)
+        @Html.Hidden("projectGroupId", Model.ProjectGroupID)
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <p><input type="submit" value="削除" class="btn btn-primary" /></p>
+            <p>@Html.ActionLink("一覧へ戻る", "Index", new { selectedThemeId = ViewBag.ThemeId })</p>
+        </div>
+    }
+</div>

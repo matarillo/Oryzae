@@ -1,0 +1,128 @@
+﻿@model NihonUnisys.Olyzae.Models.Theme
+
+@if (false)
+{
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
+}
+<script type="text/javascript">
+    var jsonElementId = '@Html.IdFor(model => model.EvaluationJSON)';
+
+    function AddModel() {
+        var self = this;
+        self.name = ko.observable('');
+        self.evaluation = null;
+
+        self.showAdd = function (ev) {
+            self.name('');
+            self.evaluation = ev;
+            $('#addDialog').modal('show');
+        };
+
+        self.doAdd = function (d, e) {
+            var value = self.name();
+            if (value) {
+                self.evaluation.items.push(new ItemModel({ name: value }));
+            }
+            self.evaluation = null;
+            $('#addDialog').modal('hide');
+        };
+    }
+
+    function EditModel() {
+        var self = this;
+        self.name = ko.observable('');
+        self.evaluation = null;
+        self.item = null;
+
+        self.showEdit = function (ev, it) {
+            self.name(it.name());
+            self.evaluation = ev;
+            self.item = it;
+            $('#editDialog').modal('show');
+        };
+
+        self.doEdit = function (d, e) {
+            var value = self.name();
+            if (value) {
+                self.item.name(value);
+            }
+            self.evaluation = null;
+            self.item = null;
+            $('#editDialog').modal('hide');
+        };
+    }
+
+    function DeleteModel() {
+        var self = this;
+        self.name = ko.observable('');
+        self.evaluation = null;
+        self.item = null;
+
+        self.showDelete = function (ev, it) {
+            self.name(it.name());
+            self.evaluation = ev;
+            self.item = it;
+            $('#deleteDialog').modal('show');
+        };
+
+        self.doDelete = function (d, e) {
+            self.evaluation.items.remove(self.item);
+            self.evaluation = null;
+            self.item = null;
+            $('#deleteDialog').modal('hide');
+        };
+    }
+
+    function ItemModel(args) {
+        args = args || {};
+        this.name = ko.observable(args.name || '');
+    }
+
+    function EvaluationModel(addVM, editVM, deleteVM, args) {
+        args = args || {};
+        var self = this;
+        self.items = ko.observableArray(
+            ko.utils.arrayMap(
+                (args.items instanceof Array) ? args.items : [],
+                function (item) {
+                    return new ItemModel(item);
+                }
+            )
+        );
+        self.showAdd = function (d, e) {
+            addVM.showAdd(self);
+        };
+        self.showEdit = function (d, e) {
+            editVM.showEdit(self, d);
+        };
+        self.showDelete = function (d, e) {
+            deleteVM.showDelete(self, d);
+        };
+        self.doSubmit = function (d, e) {
+            $('#' + jsonElementId).val(ko.toJSON(self));
+            return true;
+        };
+    }
+
+    $(function () {
+        var addViewModel = new AddModel();
+        ko.applyBindings(addViewModel, document.getElementById('addDialog'));
+        var editViewModel = new EditModel();
+        ko.applyBindings(editViewModel, document.getElementById('editDialog'));
+        var deleteViewModel = new DeleteModel();
+        ko.applyBindings(deleteViewModel, document.getElementById('deleteDialog'));
+
+        var jsonText = $('#' + jsonElementId).val();
+        var parsed = null;
+        if (jsonText) {
+            try {
+                parsed = JSON.parse(jsonText);
+            } catch (e) {
+            }
+        }
+        var viewModel = new EvaluationModel(addViewModel, editViewModel, deleteViewModel, parsed);
+        ko.applyBindings(viewModel, document.getElementById('themeForm'));
+    })
+</script>

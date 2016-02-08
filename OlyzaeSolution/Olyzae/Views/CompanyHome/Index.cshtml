@@ -1,0 +1,117 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Project>
+@using NihonUnisys.Olyzae.Models
+
+@{
+    ViewBag.Title = "Index";
+
+    // タブの表示順に並べた ProjectCategory
+    IList<ProjectCategory> sortedProjectCategories = new List<ProjectCategory>();
+    sortedProjectCategories.Add(ProjectCategory.Career);
+    sortedProjectCategories.Add(ProjectCategory.Internship);
+    sortedProjectCategories.Add(ProjectCategory.Arbeit);
+    sortedProjectCategories.Add(ProjectCategory.Study);
+    sortedProjectCategories.Add(ProjectCategory.Travel);
+    sortedProjectCategories.Add(ProjectCategory.Event);
+    sortedProjectCategories.Add(ProjectCategory.Default);
+
+    // カテゴリ毎のプロジェクト
+    IList<IEnumerable<Project>> projectsPerCategory = new List<IEnumerable<Project>>();
+
+    for (int i = 0; i < sortedProjectCategories.Count; i++)
+    {
+        ProjectCategory category = sortedProjectCategories[i];
+        projectsPerCategory.Add(Model.Where(prj => prj.Category == category));
+    }
+}
+
+<h2>プロジェクト・コンテンツ一覧</h2>
+
+<ul class="nav nav-tabs">
+    @for (int i = 0; i < sortedProjectCategories.Count; i++)
+    {
+        ProjectCategory category = sortedProjectCategories[i];
+
+        string active = string.Empty;
+        if (category == ProjectCategory.Career)
+        {
+            active = "class=\"active\"";
+        }
+
+        <li @(Html.Raw(active))><a href="#@category.ToValue()" data-toggle="tab">@category.ToText()</a></li>
+    }
+</ul>
+
+<div class="tab-content">
+    @for (int i = 0; i < sortedProjectCategories.Count; i++)
+    {
+        ProjectCategory category = sortedProjectCategories[i];
+
+        string active = string.Empty;
+        if (category == ProjectCategory.Career)
+        {
+            active = "in active";
+        }
+
+        <div class="tab-pane fade @(active)" id="@category.ToValue()">
+            @if (projectsPerCategory[i].Count() == 0)
+            {
+                <p class="alert">カテゴリ "@category.ToText()" に該当するプロジェクトはありません。</p>
+            }
+            else
+            {
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Description)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProjectDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProjectQuota)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProjectApply)
+                        </th>
+                    </tr>
+
+                    @foreach (var item in projectsPerCategory[i])
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Index", "CompanyProjectHome", new { projectId = item.ID }, null)">
+                                    @Html.DisplayFor(model => item, "ProjectIcon")
+                                </a>
+                            </td>
+                            <td>
+                                @Html.ActionLink(item.Name, "Index", "CompanyProjectHome", new { projectId = item.ID }, null)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.ProjectDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProjectQuota)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProjectApply)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</div>

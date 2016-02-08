@@ -1,0 +1,6 @@
+﻿@model string
+<ul class="nav nav-tabs">
+    <li class="@Html.Attribute(Model == "Index" ? "active" : "")">@Html.ActionLink("新着", "Index")</li>
+    <li class="@Html.Attribute(Model == "Recommend" ? "active" : "")">@Html.ActionLink("おすすめ", "Recommend")</li>
+    <li class="@Html.Attribute(Model == "Profile" ? "active" : "")">@Html.ActionLink("プロフィール", "Profile")</li>
+</ul>

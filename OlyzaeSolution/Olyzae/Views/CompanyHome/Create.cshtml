@@ -1,0 +1,111 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>プロジェクトの新規作成</h2>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>プロジェクト情報</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, "プロジェクト名", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, "概要", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description)
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectDate, "年月日", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProjectDate)
+                @Html.ValidationMessageFor(model => model.ProjectDate)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Category, "カテゴリ", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Category)
+                @Html.ValidationMessageFor(model => model.Category)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectQuota, "定員", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProjectQuota)
+                @Html.ValidationMessageFor(model => model.ProjectQuota)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectApply, "申込者数", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.ProjectApply)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="uploadedFile">プロジェクトアイコン</label>
+            <div class="col-md-10">
+                <input type="file" id="uploadedFile" name="uploadedFile" class="form-control" /><br />
+                <div class="olyzae-preview" style="display: none">
+                    <img id="filePreview" class="img-thumbnail" src="data:image/png;base64," data-src="holder.js/100x100" alt="新しいアイコンのサムネール" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="作成" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("一覧へ戻る", "Index")
+</div>
+
+@section scripts {
+    @if (false)
+    {
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    }
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/holder.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if (window.FileReader) {
+                $('.olyzae-preview').css({ display: 'inline-block' });
+                $('#uploadedFile').change(function () {
+                    var file = $(this).prop('files')[0];
+                    var fr = new FileReader();
+                    fr.onload = function() {
+                        $('#filePreview').attr('src', fr.result);
+                    }
+                    fr.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+}

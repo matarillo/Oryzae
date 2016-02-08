@@ -1,0 +1,20 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model GroupWorkStatus
+@{
+    var text = "";
+    switch(Model)
+    {
+        case GroupWorkStatus.Default:
+            text = "提出前";
+            break;
+        case GroupWorkStatus.Submitted:
+            text = "提出済み";
+            break;
+        case GroupWorkStatus.Evaluated:
+            text = "評価済み";
+            break;
+        default:
+            break;
+    }
+}
+@text

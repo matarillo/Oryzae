@@ -1,0 +1,163 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model IList<Tuple<Timeline, Thread>>
+
+@{
+    ViewBag.Title = "Index";
+    var currentUser = ExecutionContext.Create().CurrentUser;
+}
+
+<h2>マイページ</h2>
+
+@Html.Partial("_MyPageMenuPartial", "Index")
+
+<div class="panel panel-default">
+    <div class="panel-heading">新しい投稿</div>
+    <div class="panel-body">
+        <div class="clearfix">
+            <div style="float: left;">
+                <a href="@Url.Action("Index", "User", new { id = currentUser.ID })">
+                    <img src="@Url.Action("ProfileImage", "User", new { id = currentUser.ID, thumbnail = true })" alt="" title="@currentUser.DisplayName" style="width:42px;height:42px;" />
+                </a>
+            </div>
+            <div style="float: right; width: 100%; margin-left: -45px; padding-left: 45px;">
+                @using (Html.BeginForm("CreatePersonalThread", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "olyzae-personalthread closed" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <textarea id="newThread" name="Body" rows="5" class="form-control text-box multi-line" placeholder="近況を投稿する" data-val="true" data-val-required="本文が必要です。"></textarea>
+                    </div>
+                    <div class="form-group buttons">
+                        <div style="display: inline-block;" class="olyzae-filegroup">
+                            <div class="olyzae-file" style="display: none; border-radius: 4px; padding: 6px 12px; border: 1px solid #dddddd;">
+                                <span class="glyphicon glyphicon-paperclip"></span>
+                                <span class="olyzae-filename" style="padding: 0em 0.5em;"></span>
+                                <button type="button" class="close olyzae-removefile" style="float: none;">&times;</button>
+                            </div>
+                            <div class="olyzae-nofile">
+                                <div class="btn btn-default olyzae-addfile" style="position: relative; overflow: hidden;">
+                                    <input type="file" name="uploadedFile" style="position: absolute; bottom: 0; right: 0; font-size: 100px; opacity: 0;" />
+                                    <span class="glyphicon glyphicon-paperclip"></span>ファイルを添付する
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" value="投稿" class="btn btn-default" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>新着</h3>
+
+@foreach (var item in Model)
+{
+    var timeline = item.Item1;
+    var thread = item.Item2;
+    if (timeline.Type == TimelineType.PersonalThread)
+    {
+    <div class="panel panel-default" id="thread@(thread.ID)">
+        <div class="panel-heading">あなたが自分のマイページに投稿しました。</div>
+        <div class="panel-body">
+
+            @foreach (var message in thread.Message)
+            {
+                <dl class="dl-horizontal">
+                    <dt>
+                        <a href="@Url.Action("Index", "User", new { id = message.SentUser.ID })">
+                            <img src="@Url.Action("ProfileImage", "User", new { id = message.SentUser.ID, thumbnail = true })" alt="" title="@message.SentUser.DisplayName" style="width:80px;" />
+                        </a>
+                    </dt>
+                    <dd>
+                        <p>@Html.Raw(Html.Encode(message.Body).Replace("\n", "<br/>"))</p>
+                        @if (message.AttachedDocumentID.HasValue)
+                        {
+                            <p><a href="@Url.Action("Download", "User", new { userId = currentUser.ID, threadId = thread.ID, messageId = message.ID })" class="btn btn-default"><span class="glyphicon glyphicon-paperclip"></span>@message.AttachedFileName</a></p>
+                        }
+                        <div class="row">
+                            <div class="col-sm-8 col-sm-offset-4">
+                                <p>
+                                    Posted by <a href="@Url.Action("Index", "User", new { id = message.SentUser.ID })">@message.SentUser.DisplayName</a>
+                                    @if (message.Sent.HasValue)
+                                    {
+                                        <text> at @(message.Sent.Value.ToString("yyyy/M/dd HH:mm"))</text>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+                <hr />
+            }
+
+            @using (Html.BeginForm("Reply", "User", new { userId = currentUser.ID, threadId = thread.ID }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal">
+
+                    <div class="form-group">
+                        @Html.Label("本文", new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextArea("Body", "", new { @class = "text-box multi-line form-control", @rows = "5" })
+                            @Html.ValidationMessage("Body")
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10 olyzae-filegroup">
+                            <div class="olyzae-file" style="display: none; border-radius: 4px; padding: 6px 12px; border: 1px solid #dddddd;">
+                                <span class="glyphicon glyphicon-paperclip"></span>
+                                <span class="olyzae-filename" style="padding: 0em 0.5em;"></span>
+                                <button type="button" class="close olyzae-removefile" style="float: none;">&times;</button>
+                            </div>
+                            <div class="olyzae-nofile">
+                                <div class="btn btn-default olyzae-addfile" style="position: relative; overflow: hidden;">
+                                    <input type="file" name="uploadedFile" style="position: absolute; bottom: 0; right: 0; font-size: 100px; opacity: 0;" />
+                                    <span class="glyphicon glyphicon-paperclip"></span>ファイルを添付する
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="メッセージを投稿" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    }
+    else
+    {
+    <div class="panel panel-default">
+        <div class="panel-heading">@timeline.SourceName さんが投稿しました。</div>
+        <div class="panel-body">
+            <p>
+                @timeline.Summary <a href="@Url.Action(timeline.ActionName, timeline.ControllerName, timeline.RouteValues)" class="btn btn-default">詳細へ</a>
+            </p>
+        </div>
+    </div>
+    }
+}
+
+@section scripts {
+    @if (false)
+    {
+        <script src="~/Scripts/jquery-1.10.2.js"></script>
+    }
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/olyzae.upload.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('form.olyzae-personalthread textarea').click(function () {
+                $('form.olyzae-personalthread').removeClass('closed').addClass('open');
+            });
+            $('form.olyzae-personalthread').submit(function () {
+                $('form.olyzae-personalthread').removeClass('open').addClass('closed');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,168 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model Project
+
+@{
+    ViewBag.Title = "Index";
+    var users = ViewBag.Users as IEnumerable<ParticipantUser>;
+    var groups = ViewBag.Groups as IEnumerable<ProjectGroup>;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>ユーザー</h2>
+    </div>
+    <div class="col-md-6">
+        <h2>グループ</h2>
+    </div>
+</div>
+
+<div class="row" id="buttonsRow">
+    <div class="col-md-6">
+        @using (Html.BeginForm("AssignUser", "CompanyProjectUser", new { id = 0 }, FormMethod.Get, new { id = "selectUserForm" }))
+        {
+            <p>
+                <button type="submit" class="btn btn-sm" disabled="disabled" id="selectUser">グループに入れる／外す <i class="glyphicon glyphicon-hand-right"></i></button>
+            </p>
+        }
+    </div>
+    <div class="col-md-6">
+        @using (Html.BeginForm("AssignGroup", "CompanyProjectUser", new { id = 0 }, FormMethod.Get, new { id = "selectGroupForm" }))
+        {
+            <p>
+                <button type="submit" class="btn btn-sm" disabled="disabled" id="selectGroup"><i class="glyphicon glyphicon-hand-left"></i>ユーザーを入れる／外す</button>
+                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addGroup"><i class="glyphicon glyphicon-plus"></i>グループを追加する</button>
+            </p>
+        }
+    </div>
+</div>
+
+<div class="row" id="itemsRow">
+    <div class="col-md-6">
+        <div class="list-group" id="users">
+            @foreach (var user in users)
+            {
+                
+                <a href="#" class="list-group-item" data-user="@(user.ID)">
+
+                    <h5 class="list-group-item-heading">
+                        @user.DisplayName&#040;&nbsp;@user.OnlineName&nbsp;&#041;
+                        @foreach (var userGroup in user.Groups)
+                        {
+                            <span class="label label-default">@userGroup.Group.GroupName</span>
+                        }
+                        @using (Html.BeginForm("Details", null, new { id = user.ID }, FormMethod.Get, new { @class = "pull-right" }))
+                        {
+                            <button type="submit" class="btn btn-default">詳細</button>
+                        }
+                    </h5>
+
+                    <p class="list-group-item-text">
+                        <small>
+                            @user.AcademicRecord&nbsp;@Html.DisplayFor(model => user.AcademicYear, "AcademicYear")
+                        </small>
+                    </p>
+                </a>                                                
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="list-group" id="groups">
+            @foreach (var group in groups)
+            {
+                <a href="#" class="list-group-item group" data-group="@(group.ID)" data-group-name="@(group.GroupName)">
+                    <h5 class="list-group-item-heading">
+                        @(group.GroupName)
+                        @if (group.Accessibility == ProjectGroupAccessibility.Public)
+                        {
+                            <span class="label label-default">公開</span>
+                        }
+                        else
+                        {
+                            <span class="label label-default">非公開</span>
+                        }
+                        <span class="pull-right">
+                            <span class="glyphicon glyphicon-edit" title="編集" data-action="edit" style="cursor: pointer"></span>
+                            <span class="glyphicon glyphicon-remove" title="削除" data-action="delete" style="cursor: pointer"></span>
+                        </span>
+                    </h5>
+                    <p class="list-group-item-text"><small>@(group.ParticipantUsers.Count)人</small></p>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_CreateGroup")
+@Html.Partial("_EditGroup")
+@Html.Partial("_DeleteGroup")
+
+<script type="text/javascript">
+    $(function () {
+        var $userItems = $("#users .list-group-item");
+        var $groupItems = $("#groups .list-group-item");
+        var $allItems = $userItems.add($groupItems);
+        $userItems.click(function () {
+            var $target = $(this);
+            $allItems.removeClass("active");
+            $target.addClass("active");
+
+            var userId = $target.data("user");
+            var $form = $("#selectUserForm");
+            var formAction = $form.attr("action");
+            formAction = formAction.replace(/\/\d$/, "/" + userId);
+            $form.attr("action", formAction);
+
+            enableButton($("#selectUser"));
+            disableButton($("#selectGroup"));
+        });
+        $groupItems.click(function () {
+            var $target = $(this);
+            $allItems.removeClass("active");
+            $target.addClass("active");
+
+            var groupId = $target.data("group");
+            var $form = $("#selectGroupForm");
+            var formAction = $form.attr("action");
+            formAction = formAction.replace(/\/\d$/, "/" + groupId);
+            $form.attr("action", formAction);
+
+            enableButton($("#selectGroup"));
+            disableButton($("#selectUser"));
+        });
+        var $icons = $("#groups .glyphicon");
+        $icons
+            .filter("[data-action='edit']")
+            .click(function () { editGroup($(this).parents(".group")); });
+        $icons
+            .filter("[data-action='delete']")
+            .click(function () { deleteGroup($(this).parents(".group")); });
+    });
+    function enableButton($button) {
+        $button
+            .removeAttr("disabled")
+            .addClass("btn-default");
+    }
+    function disableButton($button) {
+        $button
+            .attr("disabled", "disabled")
+            .removeClass("btn-default");
+    }
+    function editGroup($item) {
+        $("#@(Html.Id("EditGroup.ID"))").val($item.data("group"));
+        $("#@(Html.Id("EditGroup.GroupName"))").val($item.data("group-name"));
+        $('#editGroup').modal('show');
+    }
+    function deleteGroup($item) {
+        $("#@(Html.Id("groupIdToDelete"))").val($item.data("group"));
+        $("#@(Html.Id("groupNameToDelete"))").text($item.data("group-name"));
+        $('#deleteGroup').modal('show');
+    }
+</script>

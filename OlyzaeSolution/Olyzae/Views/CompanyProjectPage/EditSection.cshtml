@@ -1,0 +1,295 @@
+﻿@using NihonUnisys.Olyzae.Models
+@using NihonUnisys.Olyzae.Models.ProjectPages
+@{
+    ViewBag.Title = "EditSection";
+    var projectPage = ViewBag.ProjectPage as ProjectPage;
+}
+
+<h2>EditSection</h2>
+<style type="text/css">
+    div.body {
+        overflow: auto;
+    }
+
+    img.float_right {
+        float: right;
+        margin-left: 1em;
+        margin-bottom: 1em;
+    }
+
+    img.float_left {
+        float: left;
+        margin-right: 1em;
+        margin-bottom: 1em;
+    }
+</style>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form role="form">
+            <div class="form-group">
+                <label for="title">セクション見出し</label>
+                <input type="text" class="form-control" id="title" data-bind="value: title" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-default" data-bind="foreach: items">
+    <!-- ko template: { name: 'form_' + type } -->
+    <!-- /ko -->
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                挿入 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-bind="click: insertHeading">見出し文</a></li>
+                <li><a href="#" data-bind="click: insertImage">画像つき本文</a></li>
+                <li><a href="#" data-bind="click: insertText">本文</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("json", (string)ViewBag.JSON)
+    @Html.ActionLink("プロジェクトページへ戻る", "Index", null, new { @class = "btn btn-default" })
+    <button type="submit" id="submitButton" class="btn btn-primary">送信</button>
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/knockout-3.1.0.js"></script>
+
+<script id="form_heading" type="text/html">
+    <div class="panel-heading">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                見出しの大きさ <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="heading" href="#" data-bind="click: function (d, e) { d.size('big'); }">大</a></li>
+                <li><a class="heading" href="#" data-bind="click: function (d, e) { d.size('medium'); }">中</a></li>
+                <li><a class="heading" href="#" data-bind="click: function (d, e) { d.size('small'); }">小</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-default delete" type="button" data-bind="click: $parent.removeItem">
+                削除
+            </button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                挿入 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-bind="click: $parent.insertHeading">見出し文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertImage">画像つき本文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertText">本文</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body">
+        <!-- ko if: size() == "big" -->
+        <h3 contenteditable="true" class="panel panel-default" data-bind="editableText: headingText"></h3>
+        <!-- /ko -->
+        <!-- ko if: size() == "medium" -->
+        <h4 contenteditable="true" class="panel panel-default" data-bind="editableText: headingText"></h4>
+        <!-- /ko -->
+        <!-- ko if: size() == "small" -->
+        <h5 contenteditable="true" class="panel panel-default" data-bind="editableText: headingText"></h5>
+        <!-- /ko -->
+    </div>
+</script>
+
+<script id="form_image" type="text/html">
+    <div class="panel-heading">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                画像 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                @foreach (var item in projectPage.PageContents)
+                {
+                    <li><a href="#" data-image="@item.ID" data-bind="click: function (d, e) { selectImage(d, e); }">@item.ID</a></li>
+                }
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                画像の位置 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a class="img-left" href="#" data-bind="click: function (d, e) { d.alignment('left'); }">左</a></li>
+                <li><a class="img-right" href="#" data-bind="click: function (d, e) { d.alignment('right'); }">右</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-default delete" type="button" data-bind="click: $parent.removeItem">
+                削除
+            </button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                挿入 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-bind="click: $parent.insertHeading">見出し文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertImage">画像つき本文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertText">本文</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body">
+        <img alt="" data-bind="attr: { src: getImage($data) }, css: 'float_' + alignment()" />
+        <p contenteditable="true" class="panel panel-default" data-bind="editableText: bodyText"></p>
+    </div>
+</script>
+
+<script id="form_text" type="text/html">
+    <div class="panel-heading">
+        <div class="btn-group">
+            <button class="btn btn-default delete" type="button" data-bind="click: $parent.removeItem">
+                削除
+            </button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                挿入 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-bind="click: $parent.insertHeading">見出し文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertImage">画像つき本文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertText">本文</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body">
+        <p contenteditable="true" class="panel panel-default" data-bind="editableText: bodyText"></p>
+    </div>
+</script>
+
+<script id="form_last" type="text/html">
+    <div class="panel-heading">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                挿入 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-bind="click: $parent.insertHeading">見出し文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertImage">画像つき本文</a></li>
+                <li><a href="#" data-bind="click: $parent.insertText">本文</a></li>
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    function HeadingModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "heading";
+        this.headingText = ko.observable(args.headingText || "(見出しテキスト)");
+        this.size = ko.observable(args.size || "big");
+    }
+
+    function ImageModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "image";
+        this.image = ko.observable(args.image || "0");
+        this.alignment = ko.observable(args.alignment || "left");
+        this.bodyText = ko.observable(args.bodyText || "(本文テキスト)");
+    }
+
+    function TextModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "text";
+        this.bodyText = ko.observable(args.bodyText || "(本文テキスト)");
+    }
+
+    function SectionModel(args) {
+        var self = this;
+        self.title = ko.observable(args.title || "(見出し)");
+        self.items = ko.observableArray();
+        self.removeItem = function (item) {
+            if (!confirm('削除します。\nよろしいですか？')) { return; }
+            self.items.remove(item);
+        }
+        self.insertHeading = function (item) {
+            self.insert(item, new HeadingModel());
+        }
+        self.insertImage = function (item) {
+            self.insert(item, new ImageModel());
+        }
+        self.insertText = function (item) {
+            self.insert(item, new TextModel());
+        }
+        self.insert = function (item, newItem) {
+            if (item == self) {
+                self.items.push(newItem);
+                return;
+            }
+            var index = self.items.indexOf(item);
+            self.items.splice(index, 0, newItem);
+        }
+        self.newItem = function (args) {
+            if (args.type == "heading") {
+                return new HeadingModel(args);
+            } else if (args.type == "image") {
+                return new ImageModel(args);
+            } else if (args.type == "text") {
+                return new TextModel(args);
+            }
+            return null;
+        }
+
+        if (args == null) { args = {}; }
+        var arr = (args.items instanceof Array) ? args.items : [];
+        arr.forEach(function (e) {
+            var newItem = self.newItem(e);
+            if (newItem) {
+                self.items.push(newItem);
+            }
+        });
+    }
+
+    function selectImage(d, e) {
+        var image = $(e.target || e.srcElement).data("image");
+        d.image(image);
+    }
+
+    function getImage(d) {
+        var baseUrl = "@Url.Action("ShowImage", new { id = "*" })";
+        return baseUrl.replace("*", d.image());
+    }
+
+    var viewModel = null;
+
+    $(function () {
+        $("#submitButton").closest("form").bind("submit", function () {
+            $("#json").val(ko.toJSON(viewModel));
+        });
+        ko.bindingHandlers.editableText = {
+            init: function (element, valueAccessor) {
+                $(element).on('blur', function () {
+                    var observable = valueAccessor();
+                    observable($(this).text());
+                });
+            },
+            update: function (element, valueAccessor) {
+                var value = ko.utils.unwrapObservable(valueAccessor());
+                $(element).text(value);
+            }
+        };
+        try {
+            var parsed = JSON.parse($("#json").val());
+            viewModel = new SectionModel(parsed);
+        } catch (e) {
+            viewModel = new SectionModel();
+        }
+        ko.applyBindings(viewModel);
+    });
+</script>

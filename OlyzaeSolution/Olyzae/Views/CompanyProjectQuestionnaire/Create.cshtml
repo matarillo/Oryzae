@@ -1,0 +1,55 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>新規作成</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>アンケート</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.BodyJSON)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Questioned, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Questioned)
+                @Html.ValidationMessageFor(model => model.Questioned)
+            </div>
+        </div>
+        <hr />
+        @Html.Partial("_FormAndPreviewDiv")
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="新規作成" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<div>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+</div>
+
+@Html.Partial("_QuestionnaireDialog")
+
+@section scripts{
+    <script src="~/Scripts/knockout-3.1.0.debug.js"></script>
+    @Html.Partial("_QuestionnaireScript")
+}

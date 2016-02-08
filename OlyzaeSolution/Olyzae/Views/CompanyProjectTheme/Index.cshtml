@@ -1,0 +1,48 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Theme>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>一覧</h2>
+<h4>テーマ</h4>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i>&nbsp;テーマを新規作成</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EvaluationKeys)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "Details", new { themeId = item.ID })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EvaluationKeys, "EvaluationKeys")
+            </td>
+            <td>
+                @Html.ActionLink("編集", "Edit", new { themeId = item.ID }) |
+                @Html.ActionLink("削除", "Delete", new { themeId = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>

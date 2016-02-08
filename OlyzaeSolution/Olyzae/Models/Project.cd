@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="多対多">
+    <Position X="4.313" Y="0.75" Height="0.312" Width="0.7" />
+  </Comment>
+  <Comment CommentText="プロジェクトの募集開始／締切日時を表しているが、適切な設計とは言えない。">
+    <Position X="6.875" Y="4.688" Height="0.969" Width="1.7" />
+  </Comment>
+  <Class Name="NihonUnisys.Olyzae.Models.Project">
+    <Position X="3.75" Y="3" Width="2.25" />
+    <AssociationLine Name="Company" Type="NihonUnisys.Olyzae.Models.Company" ManuallyRouted="true">
+      <Path>
+        <Point X="3.75" Y="5.891" />
+        <Point X="3.073" Y="5.891" />
+        <Point X="3.073" Y="1.967" />
+        <Point X="2.5" Y="1.967" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.318" Y="-4.273" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="ParticipantUsers" Type="NihonUnisys.Olyzae.Models.ParticipantUserProject" FixedToPoint="true">
+      <Path>
+        <Point X="3.875" Y="3" />
+        <Point X="3.875" Y="1.696" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-1.348" Y="0.477" Height="0.203" Width="1.318" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="ProjectPage" Type="NihonUnisys.Olyzae.Models.ProjectPage" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.562" Y="8.331" />
+        <Point X="4.562" Y="9.425" />
+        <Point X="2.5" Y="9.425" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="2.141" Y="0.591" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAUEgAAigAAQACAAABSEAAAAAAAAAAAABBECCAQ=</HashCode>
+      <FileName>Models\Project.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Company" />
+      <Property Name="Duration" />
+      <Property Name="ProjectPage" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ParticipantUsers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Company">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <AssociationLine Name="AccountUsers" Type="NihonUnisys.Olyzae.Models.AccountUser" FixedFromPoint="true">
+      <Path>
+        <Point X="1.438" Y="2.415" />
+        <Point X="1.438" Y="3" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.15" Y="0.207" Height="0.203" Width="1.139" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Projects" Type="NihonUnisys.Olyzae.Models.Project" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="1.457" />
+        <Point X="3.24" Y="1.457" />
+        <Point X="3.24" Y="3.391" />
+        <Point X="3.75" Y="3.391" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.412" Y="2.039" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAgAAABAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Models\Company.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AccountUsers" />
+      <Property Name="Projects" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ProjectPage">
+    <Position X="0.5" Y="7.75" Width="2" />
+    <AssociationLine Name="Project" Type="NihonUnisys.Olyzae.Models.Project">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.454" Y="-0.294" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="PageContents" Type="NihonUnisys.Olyzae.Models.PageContent" FixedToPoint="true">
+      <Path>
+        <Point X="1.312" Y="7.75" />
+        <Point X="1.312" Y="6.66" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.056" Y="0.477" Height="0.203" Width="1.176" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAACAAgAAAAAAQAggAAAACAAAA=</HashCode>
+      <FileName>Models\ProjectPage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="PageContents" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.PageContent">
+    <Position X="0.5" Y="5.25" Width="2" />
+    <AssociationLine Name="ProjectPage" Type="NihonUnisys.Olyzae.Models.ProjectPage" FixedFromPoint="true">
+      <Path>
+        <Point X="1.688" Y="6.66" />
+        <Point X="1.688" Y="7.75" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-1.067" Y="0.425" Height="0.203" Width="1.044" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIgAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PageContent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ProjectPage" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.AccountUser">
+    <Position X="0.5" Y="3" Width="2" />
+    <AssociationLine Name="Company" Type="NihonUnisys.Olyzae.Models.Company" FixedToPoint="true">
+      <Path>
+        <Point X="1.75" Y="3" />
+        <Point X="1.75" Y="2.415" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.88" Y="0.185" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAABAAAIAA=</HashCode>
+      <FileName>Models\AccountUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Company" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUserProject">
+    <Position X="3.75" Y="0.5" Width="2.25" />
+    <AssociationLine Name="Project" Type="NihonUnisys.Olyzae.Models.Project" FixedFromPoint="true">
+      <Path>
+        <Point X="5.812" Y="1.696" />
+        <Point X="5.812" Y="3" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.765" Y="0.633" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAACAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Models\ParticipantUserProject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+      <Property Name="ParticipantUser" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUser">
+    <Position X="9" Y="0.5" Width="2.5" />
+    <AssociationLine Name="Projects" Type="NihonUnisys.Olyzae.Models.ParticipantUserProject">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.245" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EAQAAEgAAIIIAgGKGKggSIAAAACIAAAAAABABgIAgQA=</HashCode>
+      <FileName>Models\ParticipantUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Projects" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Duration">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Duration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="メイリオ" Size="9" />
+</ClassDiagram>

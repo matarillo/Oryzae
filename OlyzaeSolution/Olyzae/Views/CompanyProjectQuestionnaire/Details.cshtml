@@ -1,0 +1,43 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>詳細</h2>
+
+<div>
+    <h4>アンケート</h4>
+	<hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Questioned)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Questioned)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Body, "Questionnaires/Body")
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;一覧へ戻る</a>
+</p>

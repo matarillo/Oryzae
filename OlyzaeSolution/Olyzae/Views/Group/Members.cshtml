@@ -1,0 +1,34 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model IEnumerable<ParticipantUser>
+
+@{
+    ViewBag.Title = "Members";
+    var group = (Group)ViewBag.Group;
+}
+
+@Html.Partial("_ParticipantUserGroupMenuPartial", group)
+
+<h2>Members</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OnlineName)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.DisplayName, "Index", "User", new { id = item.ID }, null)
+        </td>
+        <th>
+            @Html.DisplayFor(model => item.OnlineName)
+        </th>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,109 @@
+﻿@model NihonUnisys.Olyzae.Models.GroupThread
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+@using (Html.BeginForm("Create", "CompanyProjectThread", FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>グループを指定してスレッドを新規作成</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.Label("GroupId", "グループ", new { @class = "control-label col-md-2", @data_val = "true", @data_val_required = "グループを選択してください。" })
+            <div class="col-md-10">
+                @Html.DropDownList("GroupId", "グループを選択")
+                @Html.ValidationMessage("GroupId")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("ThreadName", "スレッド名", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("ThreadName", null, new { @data_val = "true", @data_val_required = "スレッド名を入力してください。" })
+                @Html.ValidationMessage("ThreadName")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Body", "本文", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("Body", new { @data_val = "true", @data_val_required = "本文を入力してください。", @class = "text-box multi-line form-control", @rows = "5" })
+                @Html.ValidationMessage("Body")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10 olyzae-filegroup">
+                <div class="olyzae-file" style="display: none; border-radius: 4px; padding: 6px 12px; border: 1px solid #dddddd;">
+                    <span class="glyphicon glyphicon-paperclip"></span>
+                    <span class="olyzae-filename" style="padding: 0em 0.5em;"></span>
+                    <button type="button" class="close olyzae-removefile" style="float: none;">&times;</button>
+                </div>
+                <div class="olyzae-nofile">
+                    <div class="btn btn-default olyzae-addfile" style="position: relative; overflow: hidden;">
+                        <input type="file" name="uploadedFile" style="position: absolute; bottom: 0; right: 0; font-size: 100px; opacity: 0;" />
+                        <span class="glyphicon glyphicon-paperclip"></span>ファイルを添付する
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("一覧へ戻る", "Index")
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+@section scripts {
+    @if (false)
+    {
+        <script type="text/javascript" src="~/Scripts/jquery-1.10.2.js"></script>
+    }
+    <script type="text/javascript">
+        function addFile($container, fileName) {
+            $container.find('.olyzae-nofile').css({ display: 'none' });
+            $container.find('.olyzae-filename').text(fileName);
+            $container.find('.olyzae-file').css({ display: 'inline-block' });
+        }
+        function removeFile($container) {
+            $container.find('.olyzae-file').css({ display: 'none' });
+            $container.find('.olyzae-filename').text('');
+            $container.find('.olyzae-nofile').css({ display: 'inherit' });
+        }
+        $(function () {
+            $('.olyzae-filegroup input[type=file]').change(function () {
+                var $container = $(this).closest('.olyzae-filegroup');
+                var fileName = $(this).val().replace(/.*[/\\]/, '');
+                if (fileName) {
+                    addFile($container, fileName);
+                } else {
+                    removeFile($container);
+                }
+            });
+            $('.olyzae-filegroup .olyzae-removefile').click(function () {
+                var $container = $(this).closest('.olyzae-filegroup');
+                $container.wrap("<form />");
+                $container.parent().trigger('reset');
+                $container.unwrap();
+                removeFile($container);
+            });
+        });
+    </script>
+}

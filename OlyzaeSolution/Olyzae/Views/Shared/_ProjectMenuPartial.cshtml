@@ -1,0 +1,69 @@
+﻿@using NihonUnisys.Olyzae.Models;
+@model Project
+
+@{
+    const int NotAcceptable = 0;
+    const int AlreadyAccepted = 1;
+    const int NotLoggedIn = 2;
+    const int NowAccepting = 3;
+    var applicationStatus = NotAcceptable;
+    if (Model.IsCurrentUserAccepted() == true)
+    {
+        applicationStatus = AlreadyAccepted;
+    }
+    else
+    {
+        if ((Model.IsAcceptingApplication() == true) && (Model.HasReachedTheQuota() == false))
+        {
+            applicationStatus = (User.IsInRole("ParticipantUser")) ? NowAccepting : NotLoggedIn;
+        }
+    }
+}
+
+<div class="jumbotron">
+    <h2>@Model.Name</h2>
+    <p>@Model.Description</p>
+    @using (applicationStatus == NowAccepting
+        ? Html.BeginForm(Html.BeginForm("Apply", "ProjectInfo", new { projectId = Model.ID }))
+        : null)
+    {
+        <p>
+            <small>参加希望者 @Model.ProjectApply / @Model.ProjectQuota 人</small>
+            @{
+        switch (applicationStatus)
+        {
+            case AlreadyAccepted:
+                <span class="btn btn-default btn-sm disabled"><i class="glyphicon glyphicon-ok"></i>応募済み</span>
+                break;
+            case NotLoggedIn:
+                <a href="@Url.Action("Login", "Auth", new { returnUrl = Request.FilePath })" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-log-in"></i>ログインして応募する</a>
+                break;
+            case NowAccepting:
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-plus"></i>応募する</button>
+                break;
+            default:
+                <span class="btn btn-default btn-sm disabled"><i class="glyphicon glyphicon-ban-circle"></i>受付終了</span>
+                break;
+        }
+            }
+        </p>
+    }
+</div>
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                @Html.MenuLink("ホーム", "Details", "ProjectInfo", new { projectId = Model.ID }, new { ignoreAction = true })
+                @if (applicationStatus == AlreadyAccepted)
+                {
+                    @Html.MenuLink("グループ", "Index", "ProjectGroup", new { projectId = Model.ID }, new { ignoreAction = true })
+                    @Html.MenuLink("お知らせ", "Index", "ProjectThread", new { projectId = Model.ID }, new { ignoreAction = true })
+                    @Html.MenuLink("課題", "Index", "Theme", new { projectId = Model.ID }, new { ignoreAction = true })
+                    @Html.MenuLink("アンケート", "Index", "Questionnaire", new { projectId = Model.ID }, new { ignoreAction = true })
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

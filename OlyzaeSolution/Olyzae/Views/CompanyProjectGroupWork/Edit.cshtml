@@ -1,0 +1,92 @@
+﻿@model NihonUnisys.Olyzae.Models.GroupWork
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>課題テーマに対する評価</h2>
+
+@using (Html.BeginForm(null, null, null, FormMethod.Post, new { id = "EvaluationForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>評価を編集</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ThemeID)
+        @Html.HiddenFor(model => model.ProjectGroupID)
+        @Html.HiddenFor(model => model.EvaluationJSON)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectGroup, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.ProjectGroup.GroupName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AttachedFileName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.AttachedFileName)
+            </div>
+        </div>
+
+        @{
+    var i = 0;
+    foreach (var key in Model.Theme.EvaluationKeys)
+    {
+        var name = "Evaluation_" + i;
+        var value = Model.EvaluationValue(key);
+        <div class="form-group">
+            @Html.Label(name, key, new { @class = "control-label col-md-2" })
+            <div class="col-md-10" data-name="@key">
+                @Html.EditorFor(model => value, "EvaluationValue", name)
+            </div>
+        </div>
+        i++;
+    }
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Status)
+                @Html.ValidationMessageFor(model => model.Status)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="保存" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("一覧へ戻る", "Index", new { selectedThemeId = Model.Theme.ID })
+</div>
+
+@section scripts{
+    @if (false)
+    {
+        <script src="~/Scripts/jquery-1.10.2.js"></script>
+    }
+    <script type="text/javascript">
+        $(function () {
+            $('#EvaluationForm').submit(function () {
+                var js = { items: [] };
+                var $select = $('#EvaluationForm div[data-name] select');
+                $select.each(function () {
+                    var name = $(this).parent("div").data("name");
+                    var value = $(this).val();
+                    js.items.push({ name: name, value: value });
+                });
+                $('#EvaluationJSON').val(JSON.stringify(js));
+            });
+        });
+    </script>
+}

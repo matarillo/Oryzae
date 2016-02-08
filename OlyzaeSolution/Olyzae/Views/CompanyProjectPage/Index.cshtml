@@ -1,0 +1,220 @@
+﻿@using NihonUnisys.Olyzae.Models
+@using NihonUnisys.Olyzae.Models.ProjectPages
+@model Project
+
+@{
+    ViewBag.Title = "Index";
+    var projectPage = ViewBag.ProjectPage as ProjectPage;
+    var pageBody = ViewBag.PageBody as PageBody;
+    var sections = pageBody.sections ?? new List<Section>();
+    var images = ViewBag.Images as IList<SelectListItem>;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<h2>Index</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>編集</h3>
+
+        <h4>画像</h4>
+        <p>
+            @Html.ActionLink("追加", "AddImage")
+        </p>
+        <table class="table">
+            <tr>
+                <th>@Html.DisplayNameFor(model => projectPage.PageContents.First().ID)</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in projectPage.PageContents)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        <img src="@Url.Action("ShowImage", new { id = item.ID, thumbnail = true })" alt="@item.ID" />
+                    </td>
+                    <td>
+                        @Html.ActionLink("削除", "DeleteImage", new { contentId = item.ID })
+                    </td>
+                </tr>
+            }
+        </table>
+
+        @using (@Html.BeginForm("EditLayout", null, FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="backgroundImage">背景画像</label>
+                @Html.DropDownList("backgroundImage", images, new { @class = "form-control" })
+            </div>
+            <button type="submit" class="btn btn-default">更新</button>
+        }
+
+        <h4>内容</h4>
+        <p>
+            @Html.ActionLink("追加", "AddSection")
+        </p>
+        <table class="table">
+            <tr>
+                <th>見出し</th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in sections.Select((x, i) => new { Index = i, Value = x }))
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Value.title)</td>
+                    <td>
+                        @Html.ActionLink("編集", "EditSection", new { sectionId = item.Index })
+                        | @Html.ActionLink("削除", "DeleteSection", new { sectionId = item.Index })
+                    </td>
+                </tr>
+            }
+        </table>
+
+    </div>
+    <div class="col-md-8">
+        @using (Html.BeginForm())
+        {
+            @Html.Hidden("json", projectPage.PageJSON)
+        }
+        <h3>プレビュー</h3>
+        <div class="well" style="height: auto; max-height: 600px; overflow: scroll;">
+            <div class="panel panel-default" data-bind="attr: backgroundImage() > 0 ? { style: 'background-image:url(' + getImage(backgroundImage()) + ')' } : {}">
+                <div class="panel-body">
+                    <div class="jumbotron">
+                        <h2>@Model.Name</h2>
+                        <p>@Model.Description</p>
+                        <p><a class="btn btn-primary btn-lg" role="button">申し込みボタン</a></p>
+                    </div>
+                    <nav class="navbar navbar-default" role="navigation">
+                        <ul class="nav nav-pills" data-bind="foreach: sections">
+                            <li>
+                                <a href="#" data-bind="attr: { href: '#section_' + $index }, text: title"></a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <!-- ko foreach: sections -->
+                    <div class="panel panel-default" data-bind="attr: { id: 'section_' + $index }, foreach: items">
+                        <!-- ko template: { name: 'item_' + type } -->
+                        <!-- /ko -->
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/knockout-3.1.0.js"></script>
+
+<script id="item_heading" type="text/html">
+    <div class="panel-body">
+        <!-- ko if: size() == "big" -->
+        <h3 data-bind="text: headingText"></h3>
+        <!-- /ko -->
+        <!-- ko if: size() == "medium" -->
+        <h4 data-bind="text: headingText"></h4>
+        <!-- /ko -->
+        <!-- ko if: size() == "small" -->
+        <h5 data-bind="text: headingText"></h5>
+        <!-- /ko -->
+    </div>
+</script>
+
+<script id="item_image" type="text/html">
+    <div class="panel-body">
+        <img alt="" data-bind="attr: { src: getImage($data.image()) }, css: 'float_' + alignment()" />
+        <p data-bind="text: bodyText"></p>
+    </div>
+</script>
+
+<script id="item_text" type="text/html">
+    <div class="panel-body">
+        <p data-bind="text: bodyText"></p>
+    </div>
+</script>
+
+<script type="text/javascript">
+    function HeadingModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "heading";
+        this.headingText = ko.observable(args.headingText || "");
+        this.size = ko.observable(args.size || "big");
+    }
+
+    function ImageModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "image";
+        this.image = ko.observable(args.image || "0");
+        this.alignment = ko.observable(args.alignment || "left");
+        this.bodyText = ko.observable(args.bodyText || "");
+    }
+
+    function TextModel(args) {
+        if (args == null) { args = {}; }
+        this.type = "text";
+        this.bodyText = ko.observable(args.bodyText || "");
+    }
+
+    function SectionModel(args) {
+        if (args == null) { args = {}; }
+        var self = this;
+        self.title = ko.observable(args.title || "");
+        self.items = ko.observableArray();
+        self.newItem = function (args) {
+            if (args.type == "heading") {
+                return new HeadingModel(args);
+            } else if (args.type == "image") {
+                return new ImageModel(args);
+            } else if (args.type == "text") {
+                return new TextModel(args);
+            }
+            return null;
+        }
+        var arr = (args.items instanceof Array) ? args.items : [];
+        arr.forEach(function (e) {
+            var newItem = self.newItem(e);
+            if (newItem) {
+                self.items.push(newItem);
+            }
+        });
+    }
+
+    function PageModel(args) {
+        if (args == null) { args = {}; }
+        this.backgroundImage = ko.observable(args.backgroundImage || 0);
+        this.sections = ko.observableArray();
+        var self = this;
+        if (args == null) { args = {}; }
+        var arr = (args.sections instanceof Array) ? args.sections : [];
+        arr.forEach(function (e) {
+            var section = new SectionModel(e);
+            self.sections.push(section);
+        });
+    }
+
+    function getImage(imageId) {
+        var baseUrl = "@Url.Action("ShowImage", new { id = "*" })";
+        return baseUrl.replace("*", imageId);
+    }
+
+    var viewModel = null;
+
+    $(function () {
+        try {
+            var parsed = JSON.parse($("#json").val());
+            viewModel = new PageModel(parsed);
+        } catch (e) {
+            viewModel = new PageModel();
+        }
+        ko.applyBindings(viewModel);
+    });
+</script>

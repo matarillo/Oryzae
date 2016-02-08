@@ -1,0 +1,55 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+@{
+    ViewBag.Title = "Index";
+    var threads = Model.ProjectGroups.SelectMany(x => x.GroupThreads);
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<h2>スレッド</h2>
+
+<p>
+    @if ((bool)ViewBag.HasProjectGroup)
+    {
+        @Html.ActionLink("新しくスレッドを作成する", "Create")
+    }
+    else
+    {
+    <p class="text-muted">
+        <del>グループを指定して新しくスレッドを作成する</del><br />
+        <span class="text-danger">※スレッドを作成するにはグループを追加してください。</span>
+    </p>
+    }
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                スレッド名
+            </th>
+            <th>
+                グループ
+            </th>
+            <th>
+                メッセージの最終投稿日時
+            </th>
+        </tr>
+        @foreach (var item in threads)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.ThreadName, "Details", new { threadId = item.ID })
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Group.GroupName)
+                </td>
+                <td>
+                    @{
+            NihonUnisys.Olyzae.Models.Message lastPostedMessage = item.Message.FirstOrDefault(m1 => m1.Sent == item.Message.Max(m2 => m2.Sent));
+                    }
+                    @lastPostedMessage.Sent.Value.ToString("yyyy/M/dd HH:mm.ss") by @lastPostedMessage.SentUser.DisplayName
+                </td>
+            </tr>
+        }
+
+    </table>

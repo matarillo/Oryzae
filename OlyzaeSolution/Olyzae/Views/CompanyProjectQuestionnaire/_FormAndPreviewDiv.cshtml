@@ -1,0 +1,84 @@
+﻿@model NihonUnisys.Olyzae.Models.Questionnaire
+
+@if (false)
+{
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
+}
+
+<div class="form-group">
+    <label class="control-label col-md-2">ヘッダー</label>
+    <div class="col-md-10">
+        <input type="text" class="form-control" id="inputHeader" placeholder="ヘッダー部分の文章を入力してください" data-bind="value: header">
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-2">フッター</label>
+    <div class="col-md-10">
+        <input type="text" class="form-control" id="inputFooter" placeholder="フッター部分の文章を入力してください" data-bind="value: footer">
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-2">コンテンツ</label>
+    <div class=" col-md-10">
+        ※灰色：ヘッダー・フッター・セクション項目　白色：質問項目
+        <div class=" panel panel-default" id="displayArea">
+            <div class="panel-heading"><span data-bind="text: header"></span></div>
+            <div class="panel-body">
+                <div class="container">
+                    <table class="table">
+                        <tbody data-bind="foreach: { data: items, as: 'item' }">
+                            <!-- ko ifnot: item.type -->
+                            <tr class="active">
+                                <td>
+                                    <div data-bind="text: item.text"></div>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-default" data-bind="click: $parent.editSection">編集</button>
+                                        <button type="button" class="btn btn-default" data-bind="click: $parent.removeSection">削除</button>
+                                    </div>
+                                    <table class="table">
+                                        <tbody data-bind="foreach: { data: items, as: 'subitem' }">
+                                            <tr>
+                                                <td>
+                                                    <div data-bind="text: subitem.text"></div>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-default" data-bind="click: $parent.editItem">編集</button>
+                                                        <button type="button" class="btn btn-default" data-bind="click: $parent.removeItem">削除</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-default btn-sm" data-bind="click: addItem">質問を追加</button>
+                                </td>
+                            </tr>
+                            <!-- /ko -->
+                            <!-- ko if: item.type -->
+                            <tr>
+                                <td>
+                                    <div data-bind="text: item.text"></div>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-default" data-bind="click: $parent.editItem">編集</button>
+                                        <button type="button" class="btn btn-default" data-bind="click: $parent.removeItem">削除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- /ko -->
+                        </tbody>
+                    </table>
+
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            追加 <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#" data-bind="click: addSection">セクション</a></li>
+                            <li><a href="#" data-bind="click: addItem">質問</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer"><span data-bind="text: footer"></span></div>
+        </div>
+
+    </div>
+</div>

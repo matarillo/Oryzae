@@ -1,0 +1,40 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Document>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Uploaded)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FileExtension)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Uploaded)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FileExtension)
+        </td>
+        <td>
+            @Html.ActionLink("Get", "Get", new { id=item.ID.ToString() })
+        </td>
+    </tr>
+}
+
+</table>

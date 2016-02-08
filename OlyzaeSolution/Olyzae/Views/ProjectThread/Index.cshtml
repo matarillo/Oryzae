@@ -1,0 +1,41 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Thread>
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    ViewBag.Title = "Index";
+    System.Collections.Generic.Dictionary<int, DateTime> lastPostedTimes = (System.Collections.Generic.Dictionary<int, DateTime>)ViewBag.LastPostedTimes;
+    System.Collections.Generic.Dictionary<int, string> sentUserNames = (System.Collections.Generic.Dictionary<int, string>)ViewBag.SentUserNames;
+}
+
+<h2>@Html.Encode(ViewBag.ProjectName) からのお知らせ</h2>
+
+@if (Model == null || Model.Count() == 0)
+{
+    <p>お知らせはありません。</p>
+}
+else
+{
+    <table class="table">
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+
+                    @Html.ActionLink(item.ThreadName, "Messages", new { threadId = item.ID })
+                </td>
+                <td>
+                    @if (lastPostedTimes.ContainsKey(item.ID) && sentUserNames.ContainsKey(item.ID))
+                    {
+                        <span>最終投稿日 @lastPostedTimes[item.ID].ToString("yyyy/M/dd HH:mm:ss") by @sentUserNames[item.ID] </span>
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+
+<p>
+    @Html.ActionLink("プロジェクト詳細へ戻る", "Details", new { projectId = (int)ViewBag.ProjectId, controller = "ProjectInfo" })
+</p>

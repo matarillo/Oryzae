@@ -1,0 +1,46 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+@{
+    ViewBag.Title = "Index";
+    NihonUnisys.Olyzae.Models.Message message = (NihonUnisys.Olyzae.Models.Message)ViewBag.Message;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>メッセージ</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.Label("件名", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Editor("Subject", message.Subject, new { @class = "text-box single-line" })
+                @Html.ValidationMessage("Subject")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("本文", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("Body", message.Subject, new { @class = "text-box multi-line form-control" })
+                @Html.ValidationMessage("Body")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="メッセージを新規作成" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("ThreadId", (int)ViewBag.ThreadId)
+}
+
+<div>
+    @Html.ActionLink("一覧へ戻る", "Index")
+</div>

@@ -1,0 +1,12 @@
+﻿@model NihonUnisys.Olyzae.Models.ParticipantUser
+@{
+    var id = "profileImage_annonymous";
+    var iconSource = Url.Content("~/Content/Images/defaultProfileImage_medium_2.png");
+
+    if (Model != null && Model.ProfileImageDocumentID.HasValue)
+    {
+        id = "profileImage_" + Model.ID;
+        iconSource = Url.Action("ProfileImage", "Document", new { id = Model.ID });
+    }
+}
+<img id="@id" class="img-thumbnail" src="@iconSource" alt="プロフィール画像" style="width:126px; height:126px;">

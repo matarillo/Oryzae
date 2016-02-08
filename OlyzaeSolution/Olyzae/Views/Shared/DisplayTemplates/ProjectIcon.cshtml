@@ -1,0 +1,7 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+@{
+    var iconSource = (Model.Icon.HasValue)
+        ? Url.Action("ProjectIcon", "Document", new { id = Model.ID })
+        : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjUwIiB5PSI1MCIgc3R5bGU9ImZpbGw6I2FhYTtmb250LXdlaWdodDpib2xkO2ZvbnQtc2l6ZToxMnB4O2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPjEwMHgxMDA8L3RleHQ+PC9zdmc+";
+}
+<img id="projectIcon_@Model.ID" class="img-thumbnail" src="@iconSource" alt="アイコンのサムネール" style="width:100px;height:100px" />

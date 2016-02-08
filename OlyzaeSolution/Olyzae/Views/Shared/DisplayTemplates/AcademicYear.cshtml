@@ -1,0 +1,62 @@
+﻿@model int
+@{
+    var text = "";
+    switch (Model)
+    {
+        case 0:
+            text = "-";
+            break;
+        case 1:
+            text = "中学生";
+            break;
+        case 2:
+            text = "高校1年（2017年高校卒）";
+            break;
+        case 3:
+            text = "高校2年（2016年高校卒）";
+            break;
+        case 4:
+            text = "高校3年（2015年高校卒）";
+            break;
+        case 5:
+            text = "浪人生";
+            break;
+        case 6:
+            text = "大学1年（2018年大学卒）";
+            break;
+        case 7:
+            text = "大学2年（2017年大学卒）";
+            break;
+        case 8:
+            text = "大学3年（2016年大学卒）";
+            break;
+        case 9:
+            text = "大学4年（2015年大学卒）";
+            break;
+        case 10:
+            text = "修士1年（2016年大学院卒）";
+            break;
+        case 11:
+            text = "修士2年（2015年大学院卒）";
+            break;
+        case 12:
+            text = "博士課程教育関係者";
+            break;
+        case 13:
+            text = "企業関係者";
+            break;
+        case 14:
+            text = "キャリアカウンセラー";
+            break;
+        case 15:
+            text = "保護者";
+            break;
+        case 16:
+            text = "その他";
+            break;
+        
+        default:
+            break;
+    }
+}
+@text

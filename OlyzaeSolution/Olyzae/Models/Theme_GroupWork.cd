@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="多対多">
+    <Position X="10.01" Y="0.729" Height="0.312" Width="0.7" />
+  </Comment>
+  <Comment CommentText="多対多、複合主キー">
+    <Position X="2.021" Y="5.969" Height="0.312" Width="1.45" />
+  </Comment>
+  <Comment CommentText="課題の出題開始／締切日時を表しているが、適切な設計とは言えない。">
+    <Position X="7.458" Y="8.979" Height="0.75" Width="1.7" />
+  </Comment>
+  <Class Name="NihonUnisys.Olyzae.Models.GroupWork">
+    <Position X="1.5" Y="5.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAgAEEAAAABAAQAAAAAAAAAAAAAIkAAAAAABAAAAA=</HashCode>
+      <FileName>Models\GroupWork.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Theme" />
+      <Property Name="ProjectGroup" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ProjectGroup">
+    <Position X="6" Y="3.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAACAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProjectGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="GroupWork" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Project">
+    <Position X="10" Y="4" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAQAAAUEgAAigAAQACAAABSEAAAAAAAAAAAABBECCAQ=</HashCode>
+      <FileName>Models\Project.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ProjectGroups" />
+      <Property Name="Theme" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Theme">
+    <Position X="6" Y="5.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAigAAAAAAACAQAAIAAAAEAgAAAQAAAAAA=</HashCode>
+      <FileName>Models\Theme.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+      <Property Name="Duration" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="GroupWork" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Group">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQAAAAAAAAAAQAAAAAgAAE=</HashCode>
+      <FileName>Models\Group.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ParticipantUsers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUserGroup">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Models\ParticipantUserGroup.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ParticipantUser" />
+      <Property Name="Group" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.ParticipantUser">
+    <Position X="13" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAQAAEgAAIIIAgGKGKggSIAAAACIAAAAAABABgIAgQA=</HashCode>
+      <FileName>Models\ParticipantUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Groups" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Document">
+    <Position X="0.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAQAAAgAAAAAAAAAAAAAAAAABAAAEAAAAAAAA=</HashCode>
+      <FileName>Models\Document.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NihonUnisys.Olyzae.Models.Duration">
+    <Position X="6" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Duration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="メイリオ" Size="9" />
+</ClassDiagram>

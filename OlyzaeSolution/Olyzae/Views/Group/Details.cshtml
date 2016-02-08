@@ -1,0 +1,48 @@
+﻿@model NihonUnisys.Olyzae.Models.Group
+
+@{
+    ViewBag.Title = "Details";
+    var projectGroup = Model as NihonUnisys.Olyzae.Models.ProjectGroup;
+}
+
+@Html.Partial("_ParticipantUserGroupMenuPartial", Model)
+
+<h2>詳細</h2>
+
+<div>
+    <h4>あなたが参加しているグループ</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupName)
+        </dd>
+        @if (projectGroup != null)
+        {
+            <dt>
+                プロジェクト名
+            </dt>
+            <dd>
+                @Html.ActionLink(projectGroup.Project.Name, "Details", "ProjectInfo", new { projectId = projectGroup.Project.ID }, null);
+            </dd>
+        }
+
+        @if (ViewBag.ProjectMembers != null)
+        {
+            <dt>
+                参加中のユーザー
+            </dt>
+            <dd>
+                <ul>
+                    @foreach (string item in ViewBag.ProjectMembers)
+                    {
+                        <li>@Html.Raw(item)</li>
+                    }
+                </ul>
+            </dd>
+        }
+    </dl>
+</div>

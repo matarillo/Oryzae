@@ -1,0 +1,42 @@
+﻿@using NihonUnisys.Olyzae.Models;
+@model IEnumerable<NihonUnisys.Olyzae.Models.Thread>
+
+@{
+    ViewBag.Title = "Index";
+    var group = ViewBag.Group as Group;
+    Dictionary<int, DateTime> lastPostedTimes = (Dictionary<int, DateTime>)ViewBag.LastPostedTimes;
+    Dictionary<int, string> sentUserNames = (Dictionary<int, string>)ViewBag.SentUserNames;
+}
+
+@Html.Partial("_ParticipantUserGroupMenuPartial", group)
+
+<h2>
+    @Html.Encode(ViewBag.GroupName) のスレッド一覧
+</h2>
+
+<p>
+    @Html.ActionLink("スレッドの新規作成", "Create", new { groupId = ViewBag.GroupId })
+</p>
+@if (Model != null && Model.Count() > 0)
+{
+    <table class="table">
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.ActionLink(Html.Encode(item.ThreadName), "Messages", new { groupId = group.ID, threadId = item.ID })</td>
+                    <td>
+                        @if (lastPostedTimes.ContainsKey(item.ID) && sentUserNames.ContainsKey(item.ID))
+                        {
+                            <span>最終投稿日 @lastPostedTimes[item.ID].ToString("yyyy/M/dd HH:mm:ss") by @sentUserNames[item.ID] </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>スレッドはありません。</p>
+}

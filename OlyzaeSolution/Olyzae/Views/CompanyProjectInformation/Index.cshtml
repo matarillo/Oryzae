@@ -1,0 +1,46 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.ProjectThread>
+
+@{
+    ViewBag.Title = "Index";
+    Dictionary<int, DateTime> lastPostedTimes = ViewBag.LastPostedTimes as Dictionary<int, DateTime>;
+    Dictionary<int, string> lastPostedUsers = ViewBag.LastPostedUsers as Dictionary<int, string>;
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", (NihonUnisys.Olyzae.Models.Project)ViewBag.Project)
+
+<h2>配信リスト一覧</h2>
+
+<p>
+    @Html.ActionLink("新しく配信リストを作成する", "Create")
+</p>
+
+@if (Model.Count() == 0)
+{
+    <p>配信リストはまだ作成されていません。</p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                配信リスト
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.ThreadName, "Details", new { projectThreadId = item.ID })
+                </td>
+                <td>
+                    メッセージの最終投稿日時：@lastPostedTimes[item.ID].ToString("yyyy/M/dd HH:mm.ss") by @lastPostedUsers[item.ID]
+                </td>
+            </tr>
+        }
+
+    </table>
+
+}
+

@@ -1,0 +1,25 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model ProjectGroupAccessibility?
+@{
+    var text = string.Empty;
+
+    if (Model.HasValue)
+    {
+        switch (Model.Value)
+        {
+            case ProjectGroupAccessibility.Public:
+                text = "公開";
+                break;
+            case ProjectGroupAccessibility.Internal:
+                text = "非公開";
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        text = "未設定";
+    }
+}
+@text

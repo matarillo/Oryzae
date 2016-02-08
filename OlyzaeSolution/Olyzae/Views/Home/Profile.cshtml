@@ -1,0 +1,252 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model ParticipantUser
+
+@{
+    ViewBag.Title = "Profile";
+    var happinessIconImageUrls = new Dictionary<string, string>();
+    happinessIconImageUrls.Add("default", "~/Content/Images/Icons/happiness_default.png");
+    happinessIconImageUrls.Add("家族", "~/Content/Images/Icons/happiness_family.png");
+
+    var mentorIconImageUrls = new Dictionary<string, string>();
+    mentorIconImageUrls.Add("default", "~/Content/Images/Icons/mentor_default.png");
+    mentorIconImageUrls.Add("ダーウィン", "~/Content/Images/Icons/mentor_darwin.png");
+
+    var careerAnchors = new string[] {
+        "未設定",
+        "管理能力",
+        "技術的・機能的能力",
+        "安全性",
+        "創造性",
+        "自立と独立",
+        "奉仕・社会献身",
+        "純粋な挑戦",
+        "ワーク・ライフバランス",
+    };
+
+    var academic = new string[] {
+        "未設定",
+        "外国語",
+        "外国文学",
+        "言語学",
+        "考古学",
+        "宗教学・特定宗教の教養研究",
+        "心理学",
+        "人文地理",
+        "地域研究",
+        "哲学",
+        "日本文学",
+        "美学",
+        "文化人類学",
+        "文芸学",
+        "歴史学",
+        "観光学",
+        "教育学",
+        "経営学",
+        "経済学",
+        "国際学",
+        "コミュニケーション学",
+        "社会学",
+        "商学",
+        "政治学",
+        "福祉学",
+        "法学",
+        "マスコミ学・メディア学",
+        "宇宙科学（天文学）",
+        "化学",
+        "自然地理",
+        "情報科学",
+        "自然人類学",
+        "数学",
+        "生命科学",
+        "生物学",
+        "地球科学",
+        "物理学",
+        "医用生体工学",
+        "応用物理・基礎工学",
+        "核融合・原子力工学",
+        "機械工学",
+        "経営工学",
+        "建築工学",
+        "材料工学",
+        "資源・エネルギー工学",
+        "情報工学",
+        "通信工学",
+        "生産・システム工学",
+        "船舶・航空宇宙",
+        "電気・電子工学",
+        "都市工学",
+        "土木工学",
+        "画像・音響工学",
+        "水産学",
+        "獣医・畜産学",
+        "農学",
+        "農芸化学",
+        "農業経済学",
+        "農業工学",
+        "林学",
+        "医学",
+        "看護学",
+        "公衆衛生学",
+        "歯学",
+        "神経科学",
+        "スポーツ・健康科学",
+        "薬学",
+        "リハビリ・放射線・臨床検査等",
+        "経営・事務系(医療系)",
+        "家政学・生活科学",
+        "食物学",
+        "児童学",
+        "住居学",
+        "被服学",
+        "音楽",
+        "デザイン",
+        "美術",
+        "芸術・その他",
+        "環境（工学系）",
+        "環境（社会系）",
+        "環境（理学系）",
+        "国際（社会系）",
+        "国際（人文系）",
+        "国際（法律・政治・経済系）",
+        "情報（コンピュータ系）",
+        "情報（社会系）",
+        "情報（生命系）",
+        "人間（からだ系）",
+        "人間（社会系）",
+        "人間（人文系）",
+    };
+}
+
+<h2>マイページ</h2>
+
+@Html.Partial("_MyPageMenuPartial", "Profile")
+
+<div>
+    <h3>プロフィール @Html.ActionLink("プロフィールを編集", "EditUser", null, htmlAttributes: new { @class = "btn btn-default btn-sm" })</h3>
+    <hr />
+    <div class="row">
+        <div class="col-md-2">
+            @{
+                string profileImageUrl;
+                if (Model.ProfileImageDocumentID == null)
+                {
+                    profileImageUrl = Url.Content("~/Content/Images/defaultProfileImage_medium_2.png");
+                }
+                else
+                {
+                    profileImageUrl = Url.Action("ProfileImage", new { thumbnail = true });
+                }
+                <img class="img-responsive img-rounded" alt="プロフィール画像" src="@profileImageUrl" style="padding:4px; background-color:#eee;" />
+            }
+        </div>
+
+        <div class="col-md-5">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.DisplayName)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.DisplayName)（@Html.DisplayNameFor(model => model.OnlineName)：@Html.DisplayFor(model => model.OnlineName)）
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.AcademicRecord)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.AcademicRecord)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.AcademicYear)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.AcademicYear) 年
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.BirthDay)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.BirthDay)
+                </dd>
+            </dl>
+        </div>
+
+        <div class="col-md-5">
+            <ul class="list-inline">
+                <li class="col-md-3 iconWithText">
+                    <img class="img-responsive img-thumbnail" alt="専門性：@academic[Model.Academic]" src="@Url.Content("~/Content/Images/Icons/academic_" + Model.Academic.ToString() + ".png")">
+                    <div>
+                        <p>専門性</p>
+                        <p class="variableText">@academic[Model.Academic]</p>
+                    </div>
+                </li>
+
+                <li class="col-md-3 iconWithText">
+                    <img class="img-responsive img-thumbnail" alt="キャリア・アンカー：@careerAnchors[Model.CareerAnchors]" src="@Url.Content("~/Content/Images/Icons/careerAnchors_" + @Model.CareerAnchors.ToString() + ".png")">
+                </li>
+
+                <li class="col-md-3 iconWithText">
+                    @if (happinessIconImageUrls.ContainsKey(Model.Happpiness))
+                    {
+                        <img class="img-responsive img-thumbnail" alt="幸福度" src="@Url.Content(happinessIconImageUrls[Model.Happpiness])">
+                    }
+                    else
+                    {
+                        // TODO：デフォルトを表示するか、そもそも表示しないか決める
+                    }
+                </li>
+
+                <li class="col-md-3 iconWithText">
+                    @if (mentorIconImageUrls.ContainsKey(Model.Mentor))
+                    {
+                        <img class="img-responsive img-thumbnail" alt="メンター" src="@Url.Content(mentorIconImageUrls[Model.Mentor])">
+                    }
+                    else
+                    {
+                        // TODO：デフォルトを表示するか、そもそも表示しないか決める
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+{
+    <style type="text/css">
+        ul{
+            min-height: 1px;
+        }
+
+        li.iconWithText {
+            position: relative;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        li.iconWithText div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding:6px;
+            width:100%;
+            font-size:0.8em;
+        }
+
+        li.iconWithText p {
+            color:#777;
+            margin-bottom:0;
+        }
+
+        li.iconWithText p.variableText {
+            font-size: 1.5em;
+            font-weight:bold;
+        }
+    </style>
+}

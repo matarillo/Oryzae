@@ -1,0 +1,85 @@
+﻿@model NihonUnisys.Olyzae.Models.Project
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.Partial("_AccountUserProjectMenuPartial", Model)
+
+<h2>Index</h2>
+
+<p>
+    <a href="@Url.Action("Edit")" class="btn btn-default"><i class="glyphicon glyphicon-edit"></i>編集</a>
+</p>
+
+<div>
+    <h4>プロジェクト情報</h4>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2">
+            @Html.DisplayForModel("ProjectIcon")
+        </div>
+        <div class="col-md-10">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProjectDate)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ProjectDate)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Category)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Category)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Status)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Status)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProjectQuota)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ProjectQuota)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProjectApply)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ProjectApply)
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+</div>

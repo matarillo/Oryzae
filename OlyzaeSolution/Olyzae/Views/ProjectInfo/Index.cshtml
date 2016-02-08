@@ -1,0 +1,147 @@
+﻿@model IEnumerable<NihonUnisys.Olyzae.Models.Project>
+@using NihonUnisys.Olyzae.Models
+
+@section scripts
+{
+    <script>
+        $(function () {
+            // tooltip プラグインの有効化
+            $("[data-toggle='tooltip']").tooltip({ html: true });
+            $("[data-toggle='popover']").popover({
+                html: true,
+                trigger: 'hover',
+                delay: { show: 300, hide: 100 },
+                placement: 'right',
+                content: function () {
+                    var id = $(this).attr("id").replace("projectIconWrapper_", "projectDescription_");
+                    return $("#" + id).html();
+                }
+            });
+        });
+    </script>
+}
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // タブの表示順に並べた ProjectCategory
+    IList<ProjectCategory> sortedProjectCategories = new List<ProjectCategory>();
+    sortedProjectCategories.Add(ProjectCategory.Career);
+    sortedProjectCategories.Add(ProjectCategory.Internship);
+    sortedProjectCategories.Add(ProjectCategory.Arbeit);
+    sortedProjectCategories.Add(ProjectCategory.Study);
+    sortedProjectCategories.Add(ProjectCategory.Travel);
+    sortedProjectCategories.Add(ProjectCategory.Event);
+    sortedProjectCategories.Add(ProjectCategory.Default);
+
+    // 今年を確定させる
+    var ctx = ExecutionContext.Create();
+    int thisYear = ctx.Now.Year;
+}
+
+<h2>ProjectInfo</h2>
+
+<ul class="nav nav-tabs">
+    @for (int i = 0; i < sortedProjectCategories.Count; i++)
+    {
+        ProjectCategory category = sortedProjectCategories[i];
+
+        string active = string.Empty;
+        if (category == ProjectCategory.Career)
+        {
+            active = "class=\"active\"";
+        }
+
+        <li @(Html.Raw(active))><a href="#@category.ToValue()" data-toggle="tab">@category.ToText()</a></li>
+    }
+</ul>
+
+<div class="tab-content" style="padding-top:1em;">
+    @for (int i = 0; i < sortedProjectCategories.Count; i++)
+    {
+        ProjectCategory category = sortedProjectCategories[i];
+        IList<Project> projectsPerCategory = Model.Where(prj => prj.Category == category).ToList();
+
+        string active = string.Empty;
+        if (category == ProjectCategory.Career)
+        {
+            active = "in active";
+        }
+
+        <div class="tab-pane fade @(active)" id="@category.ToValue()">
+            @if (projectsPerCategory.Count() == 0)
+            {
+                <p class="alert">カテゴリ "@category.ToText()" に該当するプロジェクトはありません。</p>
+            }
+            else
+            {
+                <div class="row">
+                    @*TODO：表示形式は再検討する*@
+                    @for (int year = thisYear - 2; year <= thisYear + 2; year++)
+                    {
+                        var projects = projectsPerCategory.Where(p => p.ProjectDate.Year == year);
+                        var offset = year == thisYear - 2 ? "col-md-offset-1" : string.Empty;
+
+                        <div class="text-center col-md-2 @offset">
+                            <p>@(year)年</p>
+                            @foreach (var project in projects)
+                            {
+                                <div id="projectIconWrapper_@project.ID" data-toggle="popover">
+                                    <a href="@Url.Action("Details", new { projectId = project.ID })">
+                                    @Html.DisplayFor(model => project, "ProjectIcon")
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                    // hover 時に表示する内容を hidden で持っておく
+                    foreach (var project in projectsPerCategory)
+                    {
+                        <div id="projectDescription_@project.ID" class="col-md-4 hidden">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.Name)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.Description)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ProjectDate)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.ProjectDate)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Status)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.Status)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ProjectQuota)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.ProjectQuota)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ProjectApply)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => project.ProjectApply)
+                                </dd>
+                            </dl>
+                        </div>
+                    }
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,33 @@
+﻿@using NihonUnisys.Olyzae.Models;
+@using NihonUnisys.Olyzae.Models.ProjectPages;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var project = (Project)ViewBag.Project;
+    var projectPage = project.ProjectPage ?? new ProjectPage();
+    var pageBody = projectPage.PageBody ?? new PageBody();
+}
+
+<style type="text/css">
+    div.project {
+        padding: 1em;
+        @if (pageBody.backgroundImage > 0)
+        {
+            <text>background-image: url('@Url.Action("ShowImage", "ProjectInfo", new { projectId = project.ID, id = pageBody.backgroundImage })');</text>
+        }
+    }
+</style>
+
+<div class="project">
+    @Html.Partial("_ProjectMenuPartial", project)
+    <div class="panel panel-default">
+        <div class="panel-body">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section scripts {
+  @RenderSection("scripts", required: false)
+}

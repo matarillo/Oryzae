@@ -1,0 +1,115 @@
+﻿@using NihonUnisys.Olyzae.Models
+@model Theme
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    ViewBag.Title = "Details";
+    var documents = (IDictionary<Guid, DateTime>)ViewBag.Documents;
+    var groups = (IList<ProjectGroup>)ViewBag.Groups;
+    var ctx = ExecutionContext.Create();
+    var currentUser = ctx.CurrentUser as ParticipantUser;
+    var themeIsClosed = (Model.Duration != null && Model.Duration.To <= ctx.Now);
+}
+
+<h2>課題</h2>
+
+<div>
+    <h4>詳細</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>受付開始日時
+        </dt>
+
+        <dd>
+            @if (Model.Duration.From.HasValue)
+            {
+                <text>@Html.DisplayFor(model => model.Duration.From.Value)</text>
+            }
+        </dd>
+
+        <dt>受付終了日時
+        </dt>
+
+        <dd>
+            @if (Model.Duration.To.HasValue)
+            {
+                <text>@Html.DisplayFor(model => model.Duration.To.Value)</text>
+            }
+        </dd>
+    </dl>
+</div>
+
+<h4>提出状況</h4>
+
+<table class="table">
+    <tr>
+        <th>グループ名
+        </th>
+        <th>提出状況
+        </th>
+        <th>登録日時</th>
+        <th>ファイル</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in groups)
+    {
+        var groupWork = item.GroupWork.FirstOrDefault();
+        var groupWorkIsEvaluated = (groupWork != null && groupWork.Status == GroupWorkStatus.Evaluated);
+        <tr>
+            <td>
+                @Html.ActionLink(item.GroupName, "Details", "ProjectGroup", new { projectId = item.Project.ID, groupId = item.ID }, null)
+            </td>
+            <td>
+                @if (groupWork != null)
+                {
+                    @Html.DisplayFor(model => groupWork.Status)
+                }
+                else
+                {
+                    <text>未登録</text>
+                }
+            </td>
+            <td>
+                @if (groupWork != null && groupWork.AttachedDocumentID != null)
+                {
+                    <text>@documents[groupWork.AttachedDocumentID.Value]</text>
+                }
+            </td>
+            <td>
+                @if (groupWork != null && groupWork.AttachedDocumentID.HasValue)
+                {
+                    <p><a href="@Url.Action("Download", new { themeId = groupWork.ThemeID, groupId = groupWork.ProjectGroupID })" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-paperclip"></span> @groupWork.AttachedFileName</a></p>
+                }
+            </td>
+            <td>
+                @if ((!themeIsClosed) && (item.ContainsUser(currentUser.ID)) && (!groupWorkIsEvaluated))
+                {
+                    @Html.ActionLink("提出／差替え／取下げ", "GroupWork", new { projectId = item.Project.ID, themeId = Model.ID, groupId = item.ID }, new { @class = "btn btn-default btn-sm" })
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+<p>
+    <a href="@Url.Action("Index")" class="btn btn-default"><i class="glyphicon glyphicon-circle-arrow-left"></i>&nbsp;課題の一覧へ戻る</a>
+</p>
